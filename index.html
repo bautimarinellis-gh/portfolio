@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bautista Marinelli — Portfolio</title>
-  <meta name="description" content="Portfolio de Bautista Marinelli, Analista de Sistemas. Proyectos en MERN, C# y bases de datos.">
+  <title>Bautista Marinelli Scaglia — Portfolio</title>
+  <meta name="description" content="Portfolio de Bautista Marinelli Scaglia, estudiante de Ingeniería en Sistemas. Proyectos en MERN, .NET/C# y bases de datos.">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
   <header class="site-header">
     <nav class="nav container">
-      <a href="#inicio" class="logo">BM<span>.</span></a>
+      <a href="#inicio" class="logo">BMS<span>.</span></a>
       <ul class="nav-links">
         <li><a href="#sobre-mi">Sobre mí</a></li>
+        <li><a href="#experiencia">Experiencia</a></li>
         <li><a href="#proyectos">Proyectos</a></li>
         <li><a href="#stack">Stack</a></li>
         <li><a href="#contacto">Contacto</a></li>
@@ -25,17 +26,19 @@
     <!-- HERO -->
     <section id="inicio" class="hero container">
       <p class="hero-eyebrow reveal">Hola, soy</p>
-      <h1 class="hero-name reveal">Bautista Marinelli</h1>
+      <h1 class="hero-name reveal">Bautista Marinelli Scaglia</h1>
       <p class="hero-role reveal">
         Listo para ser <span id="typed-role" class="typed-role"></span><span class="cursor">|</span>
       </p>
       <p class="hero-desc reveal">
-        Analista de Sistemas. Me muevo cómodo entre backend, frontend y bases de datos —
-        y cada vez más apoyado en IA para acelerar el desarrollo sin perder criterio de diseño.
+        Estudiante avanzado de Ingeniería en Sistemas (UAI) con experiencia práctica en desarrollo backend
+        con .NET Core y Node.js/Express, bases de datos SQL/NoSQL y autenticación con JWT.
+        Rosario, Argentina · disponible para relocalización nacional.
       </p>
       <div class="hero-actions reveal">
         <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
         <a href="#contacto" class="btn btn-outline">Contactarme</a>
+        <a href="assets/cv/CV_BautistaMarinelli_ES.pdf" download class="btn btn-outline">Descargar CV</a>
       </div>
     </section>
 
@@ -43,18 +46,40 @@
     <section id="sobre-mi" class="container section">
       <h2 class="section-title reveal"><span class="tag">01</span> Sobre mí</h2>
       <p class="about-text reveal">
-        Soy Analista de Sistemas egresado de la Universidad Abierta Interamericana, actualmente terminando
-        mi Ingeniería y desarrollando mi Trabajo Final. Estoy abierto a cualquier rol junior donde pueda sumar:
-        desarrollo, análisis de datos, soporte técnico o backend. Trabajo principalmente con el stack MERN
-        y me siento muy cómodo con C#. Últimamente uso IA como parte de mi flujo de trabajo: me enfoco en
-        diseñar la arquitectura y la lógica de negocio, y delego buena parte de la implementación de HTML,
-        CSS y JS repetitivo.
+        Tengo 22 años y estoy en el último año de Ingeniería en Sistemas en la Universidad Abierta
+        Interamericana (UAI), con el título de Analista de Sistemas ya en mano. Tengo experiencia práctica
+        en desarrollo de APIs REST con .NET Core y Node.js/Express, diseño de bases de datos SQL y NoSQL,
+        autenticación/autorización con JWT y buenas prácticas de seguridad (rate limiting, validación de
+        inputs, control de accesos por roles). Estoy abierto a cualquier rol junior donde pueda sumar:
+        desarrollo backend, análisis funcional, datos o soporte técnico. Últimamente uso IA como parte de
+        mi flujo de trabajo: me enfoco en diseñar la arquitectura y la lógica de negocio, y delego buena
+        parte de la implementación repetitiva de frontend.
       </p>
+    </section>
+
+    <!-- EXPERIENCIA -->
+    <section id="experiencia" class="container section">
+      <h2 class="section-title reveal"><span class="tag">02</span> Experiencia</h2>
+
+      <div class="experience-item reveal">
+        <div class="experience-header">
+          <div>
+            <h3>Práctica Profesional Supervisada</h3>
+            <p class="experience-company">Quintales Rufino S.R.L. · Empresa agroindustrial · Rufino, Santa Fe</p>
+          </div>
+          <span class="experience-dates">2026 — Actualidad</span>
+        </div>
+        <ul class="experience-list">
+          <li>Desarrollo de landing page y soporte digital para la operatoria comercial de la empresa.</li>
+          <li>Relevamiento y estructuración de datos mediante web scraping: base de datos en Excel con
+            agronomías de varias provincias para el equipo de ventas.</li>
+        </ul>
+      </div>
     </section>
 
     <!-- PROYECTOS -->
     <section id="proyectos" class="container section">
-      <h2 class="section-title reveal"><span class="tag">02</span> Proyectos</h2>
+      <h2 class="section-title reveal"><span class="tag">03</span> Proyectos</h2>
 
       <div class="projects-grid">
 
@@ -65,13 +90,18 @@
           </div>
           <p class="project-desc">
             Trabajo Final de Ingeniería. Plataforma B2B que digitaliza la relación comercial entre
-            mayoristas turísticos y sus agencias minoristas: reemplaza precios por WhatsApp, reservas
-            por email y márgenes en Excel por una plataforma única con trazabilidad completa.
+            mayoristas turísticos y sus agencias minoristas, reemplazando precios por WhatsApp, reservas
+            por email y márgenes en Excel. API REST con 7 módulos funcionales (autenticación, catálogo,
+            cotizaciones, reservas y pagos) en arquitectura multitenant, con RBAC validado vía middleware
+            y JWT, documentación funcional con UML y testing de endpoints con Postman.
           </p>
           <div class="chips">
-            <span class="chip">JavaScript</span>
-            <span class="chip">Node</span>
-            <span class="chip">Arquitectura cliente-servidor</span>
+            <span class="chip">Node.js</span>
+            <span class="chip">Express</span>
+            <span class="chip">React</span>
+            <span class="chip">MongoDB</span>
+            <span class="chip">JWT</span>
+            <span class="chip">Multitenant</span>
           </div>
           <div class="project-links">
             <a href="https://github.com/bautimarinellis-gh/tourconnect-tfi" target="_blank" rel="noopener">Ver repositorio →</a>
@@ -107,12 +137,16 @@
             <span class="status status-done">Trabajo de diploma</span>
           </div>
           <p class="project-desc">
-            Trabajo final de Ingeniería de Software: sistema de gestión integral para cines,
-            con módulo de seguridad propio y varias iteraciones de mejora sobre el diseño original.
+            Trabajo final de Ingeniería de Software: aplicación desktop para gestión de alquileres,
+            ventas y stock de películas. Diseño e implementación de la base de datos relacional en
+            SQL Server con modelado de entidades, autenticación de usuarios y control de accesos por roles.
           </p>
           <div class="chips">
             <span class="chip">C#</span>
+            <span class="chip">.NET</span>
+            <span class="chip">Windows Forms</span>
             <span class="chip">SQL Server</span>
+            <span class="chip">Entity Framework</span>
           </div>
           <div class="project-links">
             <a href="https://github.com/bautimarinellis-gh/cinemanager-diploma" target="_blank" rel="noopener">Ver repositorio →</a>
@@ -124,22 +158,26 @@
 
     <!-- STACK -->
     <section id="stack" class="container section">
-      <h2 class="section-title reveal"><span class="tag">03</span> Stack</h2>
+      <h2 class="section-title reveal"><span class="tag">04</span> Stack</h2>
 
       <div class="stack-grid">
         <div class="stack-group reveal">
-          <h3>MERN</h3>
+          <h3>Backend</h3>
           <div class="chips">
-            <span class="chip">MongoDB</span>
-            <span class="chip">Express</span>
-            <span class="chip">React</span>
+            <span class="chip">C#</span>
+            <span class="chip">.NET Core</span>
+            <span class="chip">ASP.NET</span>
             <span class="chip">Node.js</span>
+            <span class="chip">Express.js</span>
           </div>
         </div>
         <div class="stack-group reveal">
-          <h3>Lenguaje principal</h3>
+          <h3>Frontend</h3>
           <div class="chips">
-            <span class="chip">C#</span>
+            <span class="chip">React</span>
+            <span class="chip">HTML</span>
+            <span class="chip">CSS</span>
+            <span class="chip">JavaScript</span>
           </div>
         </div>
         <div class="stack-group reveal">
@@ -148,14 +186,24 @@
             <span class="chip">SQL Server</span>
             <span class="chip">PostgreSQL</span>
             <span class="chip">MongoDB</span>
+            <span class="chip">Entity Framework</span>
           </div>
         </div>
         <div class="stack-group reveal">
-          <h3>Fundamentos</h3>
+          <h3>APIs, seguridad & testing</h3>
           <div class="chips">
-            <span class="chip">HTML</span>
-            <span class="chip">CSS</span>
-            <span class="chip">JavaScript</span>
+            <span class="chip">REST</span>
+            <span class="chip">JWT</span>
+            <span class="chip">Rate Limiting</span>
+            <span class="chip">Postman</span>
+          </div>
+        </div>
+        <div class="stack-group reveal">
+          <h3>Cloud & herramientas</h3>
+          <div class="chips">
+            <span class="chip">Azure (Fundamentos)</span>
+            <span class="chip">Git</span>
+            <span class="chip">GitHub</span>
           </div>
         </div>
       </div>
@@ -163,7 +211,7 @@
 
     <!-- CONTACTO -->
     <section id="contacto" class="container section">
-      <h2 class="section-title reveal"><span class="tag">04</span> Contacto</h2>
+      <h2 class="section-title reveal"><span class="tag">05</span> Contacto</h2>
       <p class="about-text reveal">Disponible para roles junior en desarrollo, datos o soporte. Escribime.</p>
       <div class="contact-links reveal">
         <a href="mailto:bautimarinelli100@gmail.com" class="btn btn-primary">Enviar email</a>
@@ -174,7 +222,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>&copy; 2026 Bautista Marinelli</p>
+    <p>&copy; 2026 Bautista Marinelli Scaglia</p>
   </footer>
 
   <script src="assets/js/script.js"></script>

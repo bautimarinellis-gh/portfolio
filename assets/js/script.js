@@ -1,5 +1,5 @@
 // Typing effect for hero role
-const roles = ['Developer', 'Analista de Datos', 'Soporte IT', 'Backend Developer'];
+const roles = ['Backend Developer', 'Analista Funcional', 'Analista de Datos', 'Soporte IT'];
 const typedEl = document.getElementById('typed-role');
 
 let roleIndex = 0;
