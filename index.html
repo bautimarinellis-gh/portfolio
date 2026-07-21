@@ -4,45 +4,179 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bautista Marinelli — Portfolio</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="description" content="Portfolio de Bautista Marinelli, Analista de Sistemas. Proyectos en MERN, C# y bases de datos.">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-  <header>
-    <h1>Bautista Marinelli</h1>
-    <p>Desarrollador de software</p>
-    <nav>
-      <a href="#about">Sobre mí</a>
-      <a href="#projects">Proyectos</a>
-      <a href="#contact">Contacto</a>
+
+  <header class="site-header">
+    <nav class="nav container">
+      <a href="#inicio" class="logo">BM<span>.</span></a>
+      <ul class="nav-links">
+        <li><a href="#sobre-mi">Sobre mí</a></li>
+        <li><a href="#proyectos">Proyectos</a></li>
+        <li><a href="#stack">Stack</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
     </nav>
   </header>
 
   <main>
-    <section id="about">
-      <h2>Sobre mí</h2>
-      <p>Contá acá quién sos y qué hacés.</p>
-    </section>
-
-    <section id="projects">
-      <h2>Proyectos</h2>
-      <div class="project-grid">
-        <article class="project-card">
-          <h3>Proyecto 1</h3>
-          <p>Descripción breve del proyecto.</p>
-        </article>
+    <!-- HERO -->
+    <section id="inicio" class="hero container">
+      <p class="hero-eyebrow reveal">Hola, soy</p>
+      <h1 class="hero-name reveal">Bautista Marinelli</h1>
+      <p class="hero-role reveal">
+        Listo para ser <span id="typed-role" class="typed-role"></span><span class="cursor">|</span>
+      </p>
+      <p class="hero-desc reveal">
+        Analista de Sistemas. Me muevo cómodo entre backend, frontend y bases de datos —
+        y cada vez más apoyado en IA para acelerar el desarrollo sin perder criterio de diseño.
+      </p>
+      <div class="hero-actions reveal">
+        <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
+        <a href="#contacto" class="btn btn-outline">Contactarme</a>
       </div>
     </section>
 
-    <section id="contact">
-      <h2>Contacto</h2>
-      <p>Email: tu@email.com</p>
+    <!-- SOBRE MI -->
+    <section id="sobre-mi" class="container section">
+      <h2 class="section-title reveal"><span class="tag">01</span> Sobre mí</h2>
+      <p class="about-text reveal">
+        Soy Analista de Sistemas egresado de la Universidad Abierta Interamericana, actualmente terminando
+        mi Ingeniería y desarrollando mi Trabajo Final. Estoy abierto a cualquier rol junior donde pueda sumar:
+        desarrollo, análisis de datos, soporte técnico o backend. Trabajo principalmente con el stack MERN
+        y me siento muy cómodo con C#. Últimamente uso IA como parte de mi flujo de trabajo: me enfoco en
+        diseñar la arquitectura y la lógica de negocio, y delego buena parte de la implementación de HTML,
+        CSS y JS repetitivo.
+      </p>
+    </section>
+
+    <!-- PROYECTOS -->
+    <section id="proyectos" class="container section">
+      <h2 class="section-title reveal"><span class="tag">02</span> Proyectos</h2>
+
+      <div class="projects-grid">
+
+        <article class="project-card reveal">
+          <div class="project-card-top">
+            <h3>TourConnect</h3>
+            <span class="status status-progress">En desarrollo</span>
+          </div>
+          <p class="project-desc">
+            Trabajo Final de Ingeniería. Plataforma B2B que digitaliza la relación comercial entre
+            mayoristas turísticos y sus agencias minoristas: reemplaza precios por WhatsApp, reservas
+            por email y márgenes en Excel por una plataforma única con trazabilidad completa.
+          </p>
+          <div class="chips">
+            <span class="chip">JavaScript</span>
+            <span class="chip">Node</span>
+            <span class="chip">Arquitectura cliente-servidor</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/bautimarinellis-gh/tourconnect-tfi" target="_blank" rel="noopener">Ver repositorio →</a>
+          </div>
+        </article>
+
+        <article class="project-card reveal">
+          <div class="project-card-top">
+            <h3>UAI Finder</h3>
+            <span class="status status-done">Proyecto final de cátedra</span>
+          </div>
+          <p class="project-desc">
+            Plataforma tipo "Tinder" para estudiantes de la UAI: perfiles, sistema de matches y chat
+            en tiempo real para fomentar la interacción académica y social entre alumnos.
+          </p>
+          <div class="chips">
+            <span class="chip">React</span>
+            <span class="chip">Redux Toolkit</span>
+            <span class="chip">TypeScript</span>
+            <span class="chip">Node / Express</span>
+            <span class="chip">MongoDB</span>
+            <span class="chip">Firebase</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/bautimarinellis-gh/final-mydw-frontend" target="_blank" rel="noopener">Frontend →</a>
+            <a href="https://github.com/bautimarinellis-gh/final-mydw-backend" target="_blank" rel="noopener">Backend →</a>
+          </div>
+        </article>
+
+        <article class="project-card reveal">
+          <div class="project-card-top">
+            <h3>Cine Manager</h3>
+            <span class="status status-done">Trabajo de diploma</span>
+          </div>
+          <p class="project-desc">
+            Trabajo final de Ingeniería de Software: sistema de gestión integral para cines,
+            con módulo de seguridad propio y varias iteraciones de mejora sobre el diseño original.
+          </p>
+          <div class="chips">
+            <span class="chip">C#</span>
+            <span class="chip">SQL Server</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/bautimarinellis-gh/cinemanager-diploma" target="_blank" rel="noopener">Ver repositorio →</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- STACK -->
+    <section id="stack" class="container section">
+      <h2 class="section-title reveal"><span class="tag">03</span> Stack</h2>
+
+      <div class="stack-grid">
+        <div class="stack-group reveal">
+          <h3>MERN</h3>
+          <div class="chips">
+            <span class="chip">MongoDB</span>
+            <span class="chip">Express</span>
+            <span class="chip">React</span>
+            <span class="chip">Node.js</span>
+          </div>
+        </div>
+        <div class="stack-group reveal">
+          <h3>Lenguaje principal</h3>
+          <div class="chips">
+            <span class="chip">C#</span>
+          </div>
+        </div>
+        <div class="stack-group reveal">
+          <h3>Bases de datos</h3>
+          <div class="chips">
+            <span class="chip">SQL Server</span>
+            <span class="chip">PostgreSQL</span>
+            <span class="chip">MongoDB</span>
+          </div>
+        </div>
+        <div class="stack-group reveal">
+          <h3>Fundamentos</h3>
+          <div class="chips">
+            <span class="chip">HTML</span>
+            <span class="chip">CSS</span>
+            <span class="chip">JavaScript</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contacto" class="container section">
+      <h2 class="section-title reveal"><span class="tag">04</span> Contacto</h2>
+      <p class="about-text reveal">Disponible para roles junior en desarrollo, datos o soporte. Escribime.</p>
+      <div class="contact-links reveal">
+        <a href="mailto:bautimarinelli100@gmail.com" class="btn btn-primary">Enviar email</a>
+        <a href="https://github.com/bautimarinellis-gh" target="_blank" rel="noopener" class="btn btn-outline">GitHub</a>
+        <a href="https://www.linkedin.com/in/bautistamarinelliscaglia/" target="_blank" rel="noopener" class="btn btn-outline">LinkedIn</a>
+      </div>
     </section>
   </main>
 
-  <footer>
+  <footer class="site-footer">
     <p>&copy; 2026 Bautista Marinelli</p>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="assets/js/script.js"></script>
 </body>
 </html>
