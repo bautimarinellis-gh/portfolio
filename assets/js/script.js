@@ -1,5 +1,5 @@
 // Typing effect for hero role
-const roles = ['Backend Developer', 'Analista Funcional', 'Analista de Datos', 'Soporte IT'];
+const roles = ['Backend Developer', 'Analista Funcional', 'QA / Testing'];
 const typedEl = document.getElementById('typed-role');
 
 let roleIndex = 0;
@@ -31,29 +31,71 @@ function typeLoop() {
 
 typeLoop();
 
-// Terminal typing effect
-const terminalLines = ['$ whoami', 'bautista_dev', '$ status', 'ready ✓'];
-const terminalText = terminalLines.join('\n');
-const terminalEl = document.getElementById('terminal-typed');
+// Mobile nav toggle
+const navToggle = document.querySelector('.nav-toggle');
+const navLinks = document.getElementById('nav-links');
 
-if (terminalEl) {
-  let terminalIndex = 0;
+if (navToggle && navLinks) {
+  navToggle.addEventListener('click', () => {
+    const willOpen = navToggle.getAttribute('aria-expanded') !== 'true';
+    navToggle.setAttribute('aria-expanded', String(willOpen));
+    navLinks.classList.toggle('is-open', willOpen);
+  });
 
-  function terminalTypeLoop() {
-    if (terminalIndex <= terminalText.length) {
-      terminalEl.textContent = terminalText.slice(0, terminalIndex);
-      terminalIndex++;
-      setTimeout(terminalTypeLoop, 55);
-    } else {
-      setTimeout(() => {
-        terminalEl.textContent = '';
-        terminalIndex = 0;
-        setTimeout(terminalTypeLoop, 500);
-      }, 2600);
-    }
+  navLinks.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      navToggle.setAttribute('aria-expanded', 'false');
+      navLinks.classList.remove('is-open');
+    });
+  });
+}
+
+// Nav active-link on scroll
+const navLinkEls = document.querySelectorAll('.nav-links a');
+const sections = Array.from(navLinkEls)
+  .map((link) => document.querySelector(link.getAttribute('href')))
+  .filter(Boolean);
+
+function updateActiveNavLink() {
+  const offset = 120;
+  const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+  let current = atBottom ? sections[sections.length - 1] : null;
+
+  if (!atBottom) {
+    sections.forEach((section) => {
+      if (section.getBoundingClientRect().top - offset <= 0) {
+        current = section;
+      }
+    });
   }
 
-  terminalTypeLoop();
+  navLinkEls.forEach((link) => {
+    link.classList.toggle('is-active', !!current && link.getAttribute('href') === `#${current.id}`);
+  });
+}
+
+let navScrollTicking = false;
+
+window.addEventListener('scroll', () => {
+  if (navScrollTicking) return;
+  navScrollTicking = true;
+  requestAnimationFrame(() => {
+    updateActiveNavLink();
+    navScrollTicking = false;
+  });
+}, { passive: true });
+
+window.addEventListener('resize', updateActiveNavLink);
+updateActiveNavLink();
+
+// Back to top: land at the true document top, not just below the sticky header
+const backToTop = document.querySelector('.footer-links a[href="#inicio"]');
+
+if (backToTop) {
+  backToTop.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 }
 
 // Project card "Ver más / Ver menos" toggle

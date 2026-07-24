@@ -7,7 +7,47 @@
   <title>Bautista Marinelli Scaglia — Portfolio</title>
   <meta name="description"
     content="Portfolio de Bautista Marinelli Scaglia, estudiante de Ingeniería en Sistemas. Proyectos en MERN, .NET/C# y bases de datos.">
+  <meta name="theme-color" content="#0a0a0a">
+
+  <!-- TODO: reemplazar por la URL real una vez publicado el sitio -->
+  <link rel="canonical" href="https://tu-dominio-aqui.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Bautista Marinelli Scaglia — Portfolio">
+  <meta property="og:description"
+    content="Portfolio de Bautista Marinelli Scaglia, estudiante de Ingeniería en Sistemas. Proyectos en MERN, .NET/C# y bases de datos.">
+  <meta property="og:image" content="https://tu-dominio-aqui.com/assets/img/Foto.jpg">
+  <meta property="og:url" content="https://tu-dominio-aqui.com/">
+  <meta property="og:locale" content="es_AR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bautista Marinelli Scaglia — Portfolio">
+  <meta name="twitter:description"
+    content="Portfolio de Bautista Marinelli Scaglia, estudiante de Ingeniería en Sistemas. Proyectos en MERN, .NET/C# y bases de datos.">
+  <meta name="twitter:image" content="https://tu-dominio-aqui.com/assets/img/Foto.jpg">
+
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <link rel="stylesheet" href="assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Bautista Marinelli Scaglia",
+    "url": "https://tu-dominio-aqui.com/",
+    "image": "https://tu-dominio-aqui.com/assets/img/Foto.jpg",
+    "email": "mailto:bautimarinelli100@gmail.com",
+    "jobTitle": "Estudiante de Ingeniería en Sistemas",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Rosario",
+      "addressRegion": "Santa Fe",
+      "addressCountry": "AR"
+    },
+    "sameAs": [
+      "https://github.com/bautimarinellis-gh",
+      "https://www.linkedin.com/in/bautistamarinelliscaglia/"
+    ]
+  }
+  </script>
 </head>
 
 <body>
@@ -15,7 +55,10 @@
   <header class="site-header">
     <nav class="nav container">
       <a href="#inicio" class="logo">BMS<span>.</span></a>
-      <ul class="nav-links">
+      <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
         <li><a href="#sobre-mi">Sobre mí</a></li>
         <li><a href="#experiencia">Experiencia</a></li>
         <li><a href="#proyectos">Proyectos</a></li>
@@ -38,15 +81,14 @@
         <div class="hero-actions reveal">
           <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
           <a href="#contacto" class="btn btn-outline">Contactarme</a>
-          <a href="assets/cv/CV_BautistaMarinelli_ES.pdf" download class="btn btn-outline">Descargar CV</a>
+          <a href="assets/cv/CV_BautistaMarinelli_ES.pdf" target="_blank" rel="noopener" class="btn btn-outline">Ver
+            CV</a>
         </div>
       </div>
 
       <div class="hero-sprite reveal">
-        <div class="hero-terminal">
-          <pre class="hero-terminal-body"
-            aria-hidden="true"><code><span id="terminal-typed"></span><span class="cursor">|</span></code></pre>
-        </div>
+        <img src="assets/img/Foto.jpg" alt="Bautista Marinelli Scaglia" class="hero-avatar" width="480" height="480"
+          fetchpriority="high">
       </div>
     </section>
 
@@ -344,6 +386,12 @@
   </main>
 
   <footer class="site-footer">
+    <div class="footer-links">
+      <a href="#inicio">Volver arriba ↑</a>
+      <a href="https://github.com/bautimarinellis-gh" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/bautistamarinelliscaglia/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="mailto:bautimarinelli100@gmail.com">Email</a>
+    </div>
     <p>&copy; 2026 Bautista Marinelli Scaglia</p>
   </footer>
 
