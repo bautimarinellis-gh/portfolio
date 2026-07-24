@@ -31,6 +31,52 @@ function typeLoop() {
 
 typeLoop();
 
+// Terminal typing effect
+const terminalLines = ['$ whoami', 'bautista_dev', '$ status', 'ready ✓'];
+const terminalText = terminalLines.join('\n');
+const terminalEl = document.getElementById('terminal-typed');
+
+if (terminalEl) {
+  let terminalIndex = 0;
+
+  function terminalTypeLoop() {
+    if (terminalIndex <= terminalText.length) {
+      terminalEl.textContent = terminalText.slice(0, terminalIndex);
+      terminalIndex++;
+      setTimeout(terminalTypeLoop, 55);
+    } else {
+      setTimeout(() => {
+        terminalEl.textContent = '';
+        terminalIndex = 0;
+        setTimeout(terminalTypeLoop, 500);
+      }, 2600);
+    }
+  }
+
+  terminalTypeLoop();
+}
+
+// Project card "Ver más / Ver menos" toggle
+document.querySelectorAll('.project-toggle').forEach((btn) => {
+  const panel = document.getElementById(btn.getAttribute('aria-controls'));
+  if (!panel) return;
+
+  btn.addEventListener('click', () => {
+    const willOpen = btn.getAttribute('aria-expanded') !== 'true';
+
+    panel.classList.toggle('is-open', willOpen);
+    panel.style.maxHeight = willOpen ? panel.scrollHeight + 'px' : '0px';
+    btn.setAttribute('aria-expanded', String(willOpen));
+    btn.textContent = willOpen ? 'Ver menos' : 'Ver más';
+  });
+});
+
+window.addEventListener('resize', () => {
+  document.querySelectorAll('.project-collapse.is-open').forEach((panel) => {
+    panel.style.maxHeight = panel.scrollHeight + 'px';
+  });
+});
+
 // Scroll reveal
 const revealEls = document.querySelectorAll('.reveal');
 

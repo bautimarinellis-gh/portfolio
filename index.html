@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bautista Marinelli Scaglia — Portfolio</title>
-  <meta name="description" content="Portfolio de Bautista Marinelli Scaglia, estudiante de Ingeniería en Sistemas. Proyectos en MERN, .NET/C# y bases de datos.">
+  <meta name="description"
+    content="Portfolio de Bautista Marinelli Scaglia, estudiante de Ingeniería en Sistemas. Proyectos en MERN, .NET/C# y bases de datos.">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
 
   <header class="site-header">
@@ -25,36 +28,46 @@
   <main>
     <!-- HERO -->
     <section id="inicio" class="hero container">
-      <p class="hero-eyebrow reveal">Hola, soy</p>
-      <h1 class="hero-name reveal">Bautista Marinelli Scaglia</h1>
-      <p class="hero-role reveal">
-        Listo para ser <span id="typed-role" class="typed-role"></span><span class="cursor">|</span>
-      </p>
-      <p class="hero-desc reveal">
-        Estudiante avanzado de Ingeniería en Sistemas (UAI) con experiencia práctica en desarrollo backend
-        con .NET Core y Node.js/Express, bases de datos SQL/NoSQL y autenticación con JWT.
-        Rosario, Argentina · disponible para relocalización nacional.
-      </p>
-      <div class="hero-actions reveal">
-        <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
-        <a href="#contacto" class="btn btn-outline">Contactarme</a>
-        <a href="assets/cv/CV_BautistaMarinelli_ES.pdf" download class="btn btn-outline">Descargar CV</a>
+      <div class="hero-text">
+        <p class="hero-eyebrow reveal">Hola, soy</p>
+        <h1 class="hero-name reveal">Bautista Marinelli Scaglia</h1>
+        <p class="hero-role reveal">
+          Listo para ser <span id="typed-role" class="typed-role"></span><span class="cursor">|</span>
+        </p>
+
+        <div class="hero-actions reveal">
+          <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
+          <a href="#contacto" class="btn btn-outline">Contactarme</a>
+          <a href="assets/cv/CV_BautistaMarinelli_ES.pdf" download class="btn btn-outline">Descargar CV</a>
+        </div>
+      </div>
+
+      <div class="hero-sprite reveal">
+        <div class="hero-terminal">
+          <pre class="hero-terminal-body" aria-hidden="true"><code><span id="terminal-typed"></span><span class="cursor">|</span></code></pre>
+        </div>
       </div>
     </section>
 
     <!-- SOBRE MI -->
     <section id="sobre-mi" class="container section">
       <h2 class="section-title reveal"><span class="tag">01</span> Sobre mí</h2>
-      <p class="about-text reveal">
-        Tengo 22 años y estoy en el último año de Ingeniería en Sistemas en la Universidad Abierta
-        Interamericana (UAI), con el título de Analista de Sistemas ya en mano. Tengo experiencia práctica
-        en desarrollo de APIs REST con .NET Core y Node.js/Express, diseño de bases de datos SQL y NoSQL,
-        autenticación/autorización con JWT y buenas prácticas de seguridad (rate limiting, validación de
-        inputs, control de accesos por roles). Estoy abierto a cualquier rol junior donde pueda sumar:
-        desarrollo backend, análisis funcional, datos o soporte técnico. Últimamente uso IA como parte de
-        mi flujo de trabajo: me enfoco en diseñar la arquitectura y la lógica de negocio, y delego buena
-        parte de la implementación repetitiva de frontend.
-      </p>
+      <div class="about-text-group reveal">
+        <p class="about-text">
+          Tengo 22 años y estoy en el último año de Ingeniería en Sistemas en la Universidad Abierta
+          Interamericana (UAI), con el título intermedio de Analista de Sistemas ya en mano. Vengo
+          combinando la formación académica con trabajo real: diseñé y desarrollé APIs REST con .NET Core
+          y Node.js/Express, modelé bases de datos SQL y NoSQL, e implementé autenticación/autorización
+          con JWT junto con buenas prácticas de seguridad como rate limiting y control de accesos por
+          roles — todo esto tanto en proyectos de cátedra como en mi Trabajo Final de Ingeniería y mi
+          Práctica Profesional Supervisada, donde trabajé con clientes reales.
+        </p>
+        <p class="about-text">
+          Estoy buscando mi primer rol junior en IT — desarrollo backend, análisis funcional o analista
+          informático — donde pueda seguir creciendo dentro de un equipo, aportando lo que ya vengo
+          construyendo en mis proyectos. Trabajo en Rosario, de forma presencial o híbrida.
+        </p>
+      </div>
     </section>
 
     <!-- EXPERIENCIA -->
@@ -75,6 +88,48 @@
             agronomías de varias provincias para el equipo de ventas.</li>
         </ul>
       </div>
+
+      <div class="experience-item reveal">
+        <div class="experience-header">
+          <div>
+            <h3>Landing page y marketing digital — Agridrop</h3>
+            <p class="experience-company">Freelance · Bioestimulantes y coadyuvantes agrícolas de precisión ·
+              emprendimiento vinculado a Quintales Rufino S.R.L.</p>
+          </div>
+        </div>
+        <div class="project-block">
+          <p class="project-label">Problema</p>
+          <p class="project-text">
+            Marca nueva de agroinsumos sin presencia digital. Le venden a agrónomos y productores, no a
+            consumidor final, así que necesitaban un sitio que se viera técnicamente serio: certificaciones,
+            especificaciones reales de cada producto.
+          </p>
+        </div>
+        <button type="button" class="project-toggle" aria-expanded="false" aria-controls="agridrop-details">Ver
+          más</button>
+        <div class="project-collapse" id="agridrop-details">
+          <div class="project-block">
+            <p class="project-label">Decisión de contenido</p>
+            <p class="project-text">
+              En vez de bajada de marketing genérica, armé una ficha técnica por producto: principio
+              activo, compatibilidad, pH, porcentaje de componente activo.
+            </p>
+          </div>
+          <div class="project-block">
+            <p class="project-label">Alcance</p>
+            <p class="project-text">
+              Landing en producción con hero, catálogo de las 5 líneas (Drop Forte, Drop Thor, Drop Flow,
+              Drop Elixir, Drop Quality) con fichas técnicas y certificación ISO 9001/14001, sección
+              "nosotros" y contacto directo por WhatsApp. Sumado a eso, gestión de redes
+              (Instagram/Facebook), email marketing y una base de agronomías filtrada en 5 provincias para
+              outreach comercial, armada aparte del sitio.
+            </p>
+          </div>
+        </div>
+        <div class="project-links">
+          <a href="https://www.agridrop.com.ar/" target="_blank" rel="noopener">Ver sitio →</a>
+        </div>
+      </div>
     </section>
 
     <!-- PROYECTOS -->
@@ -88,13 +143,35 @@
             <h3>TourConnect</h3>
             <span class="status status-progress">En desarrollo</span>
           </div>
-          <p class="project-desc">
-            Trabajo Final de Ingeniería. Plataforma B2B que digitaliza la relación comercial entre
-            mayoristas turísticos y sus agencias minoristas, reemplazando precios por WhatsApp, reservas
-            por email y márgenes en Excel. API REST con 7 módulos funcionales (autenticación, catálogo,
-            cotizaciones, reservas y pagos) en arquitectura multitenant, con RBAC validado vía middleware
-            y JWT, documentación funcional con UML y testing de endpoints con Postman.
-          </p>
+          <div class="project-block">
+            <p class="project-label">Problema</p>
+            <p class="project-text">
+              Los mayoristas turísticos gestionan precios por WhatsApp, reservas por email y márgenes
+              en Excel: sin trazabilidad y sin control de acceso diferenciado frente a sus agencias minoristas.
+            </p>
+          </div>
+          <button type="button" class="project-toggle" aria-expanded="false" aria-controls="tourconnect-details">Ver
+            más</button>
+          <div class="project-collapse" id="tourconnect-details">
+            <div class="project-block">
+              <p class="project-label">Decisión técnica</p>
+              <p class="project-text">
+                Arquitectura multitenant (MERN) con RBAC validado vía middleware y JWT para separar
+                permisos entre mayorista y agencia. Asistente RAG propio (Intent Classifier + Query
+                Executor) que consulta MongoDB directamente en lugar de una vector DB, priorizando
+                simplicidad y costo dado un dominio de consultas acotado. Módulo de Audit Trail para
+                trazabilidad de cambios sobre cotizaciones y reservas.
+              </p>
+            </div>
+            <div class="project-block">
+              <p class="project-label">Alcance</p>
+              <p class="project-text">
+                Trabajo Final de Ingeniería. API REST con 7 módulos funcionales (autenticación, catálogo,
+                cotizaciones, reservas y pagos), documentación funcional con UML y testing de endpoints
+                con Postman.
+              </p>
+            </div>
+          </div>
           <div class="chips">
             <span class="chip">Node.js</span>
             <span class="chip">Express</span>
@@ -104,7 +181,8 @@
             <span class="chip">Multitenant</span>
           </div>
           <div class="project-links">
-            <a href="https://github.com/bautimarinellis-gh/tourconnect-tfi" target="_blank" rel="noopener">Ver repositorio →</a>
+            <a href="https://github.com/bautimarinellis-gh/tourconnect-tfi" target="_blank" rel="noopener">Ver
+              repositorio →</a>
           </div>
         </article>
 
@@ -113,10 +191,31 @@
             <h3>UAI Finder</h3>
             <span class="status status-done">Proyecto final de cátedra</span>
           </div>
-          <p class="project-desc">
-            Plataforma tipo "Tinder" para estudiantes de la UAI: perfiles, sistema de matches y chat
-            en tiempo real para fomentar la interacción académica y social entre alumnos.
-          </p>
+          <div class="project-block">
+            <p class="project-label">Problema</p>
+            <p class="project-text">
+              Los estudiantes de la UAI de distintas facultades no tienen una forma simple de conectar
+              entre sí más allá de su propia carrera o curso.
+            </p>
+          </div>
+          <button type="button" class="project-toggle" aria-expanded="false" aria-controls="uaifinder-details">Ver
+            más</button>
+          <div class="project-collapse" id="uaifinder-details">
+            <div class="project-block">
+              <p class="project-label">Decisión técnica</p>
+              <p class="project-text">
+                Mecánica de matching por swipe (estilo Tinder) pero con un enfoque más formal que una app
+                de citas: pensada para fomentar la conexión académica y social entre alumnos de cualquier
+                facultad, no solo vínculos personales.
+              </p>
+            </div>
+            <div class="project-block">
+              <p class="project-label">Alcance</p>
+              <p class="project-text">
+                Proyecto final de cátedra. Perfiles de usuario, sistema de matches y chat en tiempo real.
+              </p>
+            </div>
+          </div>
           <div class="chips">
             <span class="chip">React</span>
             <span class="chip">Redux Toolkit</span>
@@ -126,8 +225,10 @@
             <span class="chip">Firebase</span>
           </div>
           <div class="project-links">
-            <a href="https://github.com/bautimarinellis-gh/final-mydw-frontend" target="_blank" rel="noopener">Frontend →</a>
-            <a href="https://github.com/bautimarinellis-gh/final-mydw-backend" target="_blank" rel="noopener">Backend →</a>
+            <a href="https://github.com/bautimarinellis-gh/final-mydw-frontend" target="_blank" rel="noopener">Frontend
+              →</a>
+            <a href="https://github.com/bautimarinellis-gh/final-mydw-backend" target="_blank" rel="noopener">Backend
+              →</a>
           </div>
         </article>
 
@@ -136,11 +237,37 @@
             <h3>Cine Manager</h3>
             <span class="status status-done">Trabajo de diploma</span>
           </div>
-          <p class="project-desc">
-            Trabajo final de Ingeniería de Software: aplicación desktop para gestión de alquileres,
-            ventas y stock de películas. Diseño e implementación de la base de datos relacional en
-            SQL Server con modelado de entidades, autenticación de usuarios y control de accesos por roles.
-          </p>
+          <div class="project-block">
+            <p class="project-label">Problema</p>
+            <p class="project-text">
+              Un videoclub gestiona inventario, proveedores, ventas y alquileres de forma manual, sin
+              trazabilidad de quién hizo qué cambio sobre los datos.
+            </p>
+          </div>
+          <button type="button" class="project-toggle" aria-expanded="false" aria-controls="cinemanager-details">Ver
+            más</button>
+          <div class="project-collapse" id="cinemanager-details">
+            <div class="project-block">
+              <p class="project-label">Decisión técnica</p>
+              <p class="project-text">
+                Arquitectura en 3 capas (UI · BLL · DAL) en C# con Entity Framework sobre SQL Server,
+                aplicando los patrones State (para los estados de una orden de compra: pendiente,
+                parcialmente completada, completada, cancelada), Singleton y Composite. Módulo de
+                auditoría a medida (clases <code>Auditoria</code> y <code>AuditoriaSesion</code>) en vez
+                de un framework de terceros, para trazabilidad de altas/bajas/modificaciones sobre
+                entidades críticas y de sesiones de login. Testing formal con pruebas de caja blanca
+                (análisis de complejidad ciclomática) y de caja negra (tabla de casos).
+              </p>
+            </div>
+            <div class="project-block">
+              <p class="project-label">Alcance</p>
+              <p class="project-text">
+                Trabajo final de Ingeniería de Software — examen final individual (cátedra Ing. Pablo
+                Audoglio, 3er año). 5 módulos (Compras, Ventas, Seguridad/RBAC, Inventario, Mi Perfil)
+                y 43 casos de uso documentados.
+              </p>
+            </div>
+          </div>
           <div class="chips">
             <span class="chip">C#</span>
             <span class="chip">.NET</span>
@@ -149,7 +276,8 @@
             <span class="chip">Entity Framework</span>
           </div>
           <div class="project-links">
-            <a href="https://github.com/bautimarinellis-gh/cinemanager-diploma" target="_blank" rel="noopener">Ver repositorio →</a>
+            <a href="https://github.com/bautimarinellis-gh/cinemanager-diploma" target="_blank" rel="noopener">Ver
+              repositorio →</a>
           </div>
         </article>
 
@@ -161,14 +289,15 @@
       <h2 class="section-title reveal"><span class="tag">04</span> Stack</h2>
 
       <div class="stack-grid">
-        <div class="stack-group reveal">
+        <div class="stack-group stack-featured reveal">
           <h3>Backend</h3>
           <div class="chips">
             <span class="chip">C#</span>
             <span class="chip">.NET Core</span>
             <span class="chip">ASP.NET</span>
+            <span class="chip">Entity Framework</span>
             <span class="chip">Node.js</span>
-            <span class="chip">Express.js</span>
+            <span class="chip">Express</span>
           </div>
         </div>
         <div class="stack-group reveal">
@@ -184,27 +313,17 @@
           <h3>Bases de datos</h3>
           <div class="chips">
             <span class="chip">SQL Server</span>
-            <span class="chip">PostgreSQL</span>
             <span class="chip">MongoDB</span>
-            <span class="chip">Entity Framework</span>
           </div>
         </div>
-        <div class="stack-group reveal">
-          <h3>APIs, seguridad & testing</h3>
-          <div class="chips">
-            <span class="chip">REST</span>
-            <span class="chip">JWT</span>
-            <span class="chip">Rate Limiting</span>
-            <span class="chip">Postman</span>
-          </div>
-        </div>
-        <div class="stack-group reveal">
-          <h3>Cloud & herramientas</h3>
-          <div class="chips">
-            <span class="chip">Azure (Fundamentos)</span>
-            <span class="chip">Git</span>
-            <span class="chip">GitHub</span>
-          </div>
+      </div>
+
+      <div class="stack-tools reveal">
+        <h3>Herramientas</h3>
+        <div class="chips">
+          <span class="chip">Git</span>
+          <span class="chip">GitHub</span>
+          <span class="chip">Postman</span>
         </div>
       </div>
     </section>
@@ -215,8 +334,10 @@
       <p class="about-text reveal">Disponible para roles junior en desarrollo, datos o soporte. Escribime.</p>
       <div class="contact-links reveal">
         <a href="mailto:bautimarinelli100@gmail.com" class="btn btn-primary">Enviar email</a>
-        <a href="https://github.com/bautimarinellis-gh" target="_blank" rel="noopener" class="btn btn-outline">GitHub</a>
-        <a href="https://www.linkedin.com/in/bautistamarinelliscaglia/" target="_blank" rel="noopener" class="btn btn-outline">LinkedIn</a>
+        <a href="https://github.com/bautimarinellis-gh" target="_blank" rel="noopener"
+          class="btn btn-outline">GitHub</a>
+        <a href="https://www.linkedin.com/in/bautistamarinelliscaglia/" target="_blank" rel="noopener"
+          class="btn btn-outline">LinkedIn</a>
       </div>
     </section>
   </main>
@@ -227,4 +348,5 @@
 
   <script src="assets/js/script.js"></script>
 </body>
+
 </html>
