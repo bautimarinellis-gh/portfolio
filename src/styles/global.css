@@ -1,0 +1,745 @@
+/* ------------------------------------------------------------------
+   La noche es lo personal. El día, las cosas aburridas.
+   ------------------------------------------------------------------ */
+
+:root {
+  --bg: #07080c;
+  --fg: #ebe2d0;
+  --fg-dim: #a59e90;
+  --fg-faint: #6c675f;
+  --line: rgba(235, 226, 208, 0.11);
+  --line-strong: rgba(235, 226, 208, 0.24);
+  --accent: #ff8a3d; /* brasa */
+  --coal: #d4332b; /* el único rojo */
+  --dawn: #f2b766;
+  --warm: #f1d9b8; /* texto iluminado por el fuego */
+  --header-bg: rgba(7, 8, 12, 0.72);
+
+  --serif-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", "Cascadia Code", Consolas, monospace;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --measure: 62ch;
+  --gutter: clamp(16px, 5vw, 48px);
+  --max: 1120px;
+
+  color-scheme: dark;
+}
+
+/* De día: papel, tinta, sin cielo */
+:root[data-theme="day"] {
+  --bg: #efe8da;
+  --fg: #1c1a16;
+  --fg-dim: #5f5a50;
+  --fg-faint: #8f897c;
+  --line: rgba(28, 26, 22, 0.12);
+  --line-strong: rgba(28, 26, 22, 0.28);
+  --accent: #b8501c;
+  --coal: #b8281f;
+  --warm: #1c1a16;
+  --header-bg: rgba(239, 232, 218, 0.82);
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--bg);
+  transition: background-color 1.2s var(--ease);
+}
+
+body {
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--serif);
+  font-size: clamp(1.06rem, 0.98rem + 0.3vw, 1.2rem);
+  font-optical-sizing: auto;
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+::selection {
+  background: var(--coal);
+  color: #fff6ea;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.82em;
+}
+
+:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+.skip {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 300;
+  padding: 0.5rem 0.8rem;
+  background: var(--fg);
+  color: var(--bg);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+
+.skip:focus {
+  top: 16px;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+}
+
+.dim {
+  color: var(--fg-dim);
+}
+
+/* ---------------- Cielo ---------------- */
+
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% 0%, #0d1220 0%, transparent 60%),
+    linear-gradient(180deg, #080a11 0%, #07080c 70%);
+  transition: opacity 1.2s var(--ease);
+}
+
+.sky canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* las brasas van por delante de todo, pero no tapan clics */
+.embers {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  transition: opacity 1.2s var(--ease);
+}
+
+.firelight {
+  position: absolute;
+  left: 50%;
+  bottom: -38vh;
+  width: max(140vw, 900px);
+  height: 80vh;
+  transform: translateX(-50%);
+  background: radial-gradient(closest-side, rgba(255, 128, 52, 0.3), rgba(212, 51, 43, 0.12) 45%, transparent 100%);
+  opacity: var(--fire, 1);
+}
+
+.dawn {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background:
+    radial-gradient(90% 50% at 50% 110%, rgba(242, 183, 102, 0.42), transparent 70%),
+    linear-gradient(180deg, transparent 30%, rgba(52, 66, 96, 0.55) 75%, rgba(176, 120, 92, 0.45) 100%);
+}
+
+:root[data-theme="day"] .sky,
+:root[data-theme="day"] .embers {
+  opacity: 0;
+}
+
+/* ---------------- Header ---------------- */
+
+.site-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  border-bottom: 1px solid transparent;
+  transition: background 0.6s var(--ease), border-color 0.6s var(--ease);
+}
+
+.site-header.is-scrolled {
+  background: var(--header-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom-color: var(--line);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1.1rem var(--gutter);
+}
+
+.mark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1.35rem;
+  font-variation-settings: "SOFT" 100;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  margin-right: auto;
+}
+
+.mark-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--coal);
+  box-shadow: 0 0 10px rgba(212, 51, 43, 0.8);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.9rem, 2vw, 1.7rem);
+  list-style: none;
+}
+
+.nav-links a,
+.nav-toggle {
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  color: var(--fg-dim);
+  transition: color 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a[aria-current="page"] {
+  color: var(--fg);
+}
+
+.nav-links a[aria-current="page"]::before {
+  content: "· ";
+  color: var(--accent);
+}
+
+/* lo aburrido queda aparte */
+.nav-boring {
+  padding-left: clamp(0.9rem, 2vw, 1.7rem);
+  border-left: 1px solid var(--line-strong);
+}
+
+.nav-boring a {
+  font-style: italic;
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0.4rem 0;
+}
+
+/* ---------------- Tipografía común ---------------- */
+
+.page-head {
+  padding-top: clamp(8rem, 18vw, 12rem);
+  padding-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+
+.page-kicker {
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin-bottom: 1.4rem;
+}
+
+.page-title {
+  font-family: var(--serif-display);
+  font-weight: 320;
+  font-size: clamp(2.8rem, 1.4rem + 6vw, 6.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  font-variation-settings: "SOFT" 70, "opsz" 144;
+}
+
+.page-title em {
+  font-style: italic;
+  color: var(--warm);
+  font-variation-settings: "SOFT" 100, "opsz" 144;
+}
+
+.page-lede {
+  max-width: 48ch;
+  margin-top: 1.8rem;
+  font-size: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
+  color: var(--fg-dim);
+}
+
+.section {
+  padding-block: clamp(3.5rem, 9vw, 7rem);
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 1.4rem;
+  margin-bottom: clamp(2rem, 4vw, 3.2rem);
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.section-head .hour {
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  min-width: 3.4rem;
+}
+
+.section-head h2 {
+  font-family: var(--serif-display);
+  font-weight: 350;
+  font-size: clamp(1.8rem, 1.3rem + 2vw, 2.8rem);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-variation-settings: "SOFT" 50;
+}
+
+.section-head .more-link {
+  margin-left: auto;
+}
+
+.prose {
+  max-width: var(--measure);
+}
+
+.prose p + p,
+.prose p + ul,
+.prose ul + p {
+  margin-top: 1.2em;
+}
+
+.prose h2 {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  margin: 1.6rem 0 0.3rem;
+}
+
+.prose h2 + p {
+  margin-top: 0;
+}
+
+.prose ul {
+  list-style: none;
+}
+
+.prose li {
+  position: relative;
+  padding-left: 1.3rem;
+}
+
+.prose li + li {
+  margin-top: 0.6rem;
+}
+
+.prose li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.75em;
+  width: 0.55rem;
+  height: 1px;
+  background: var(--accent);
+}
+
+/* Links tranquilos: subrayado fino que se enciende al pasar */
+.link-quiet {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  color: var(--fg);
+  padding-bottom: 3px;
+  background-image: linear-gradient(var(--line-strong), var(--line-strong)), linear-gradient(var(--accent), var(--accent));
+  background-size: 100% 1px, 0% 1px;
+  background-position: 0 100%, 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.6s var(--ease), color 0.3s;
+}
+
+.link-quiet:hover {
+  background-size: 100% 1px, 100% 1px;
+}
+
+.link-quiet small {
+  font-size: 0.72em;
+  color: var(--fg-faint);
+}
+
+.links-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1.8rem;
+}
+
+/* ---------------- Bitácora (log) ---------------- */
+
+.log {
+  list-style: none;
+}
+
+.log-item {
+  display: grid;
+  grid-template-columns: 6.5rem 6.5rem 1fr auto;
+  align-items: baseline;
+  gap: 1.2rem;
+  padding-block: 1.05rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.log-date,
+.log-type {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--fg-dim);
+}
+
+.log-type {
+  color: var(--accent);
+}
+
+.log-title {
+  font-family: var(--serif-display);
+  font-size: clamp(1.15rem, 1rem + 0.5vw, 1.4rem);
+  font-weight: 380;
+  line-height: 1.25;
+  text-decoration: none;
+  font-variation-settings: "SOFT" 50;
+  transition: color 0.3s;
+}
+
+a.log-title:hover {
+  color: var(--warm);
+}
+
+.log-meta {
+  display: block;
+  margin-top: 0.15rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--fg-dim);
+}
+
+.log-draft {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--coal);
+  border: 1px solid currentColor;
+  padding: 0 0.35rem;
+  border-radius: 2px;
+}
+
+.log-month {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  padding: 2.4rem 0 0.6rem;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.filters button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  color: var(--fg-faint);
+  padding: 0.3rem 0;
+  transition: color 0.3s;
+}
+
+.filters button:hover {
+  color: var(--fg-dim);
+}
+
+.filters button[aria-pressed="true"] {
+  color: var(--fg);
+}
+
+.filters button[aria-pressed="true"]::before {
+  content: "· ";
+  color: var(--accent);
+}
+
+.empty {
+  font-style: italic;
+  color: var(--fg-dim);
+  padding-block: 2rem;
+}
+
+/* ---------------- Ahora ---------------- */
+
+.now {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0;
+}
+
+.now-item {
+  padding: 0.4rem 1.6rem 1.4rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.now-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.now-value {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--serif-display);
+  font-size: 1.25rem;
+  font-weight: 380;
+  line-height: 1.25;
+  text-decoration: none;
+  font-variation-settings: "SOFT" 60;
+}
+
+.now-sub {
+  display: block;
+  margin-top: 0.2rem;
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--fg-dim);
+}
+
+.now-updated {
+  margin-top: 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--fg-faint);
+}
+
+/* ---------------- Puerta a lo aburrido ---------------- */
+
+.door {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 2rem;
+  padding: clamp(2rem, 5vw, 3rem) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+}
+
+.door-title {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2rem, 1.2rem + 3.6vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variation-settings: "SOFT" 100;
+}
+
+.door-sub {
+  margin-top: 0.8rem;
+  color: var(--fg-dim);
+  max-width: 46ch;
+}
+
+.door-arrow {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--fg-dim);
+  transition: transform 0.6s var(--ease), color 0.3s;
+}
+
+.door:hover .door-arrow {
+  transform: translateX(6px);
+  color: var(--dawn);
+}
+
+/* ---------------- Footer ---------------- */
+
+.site-footer {
+  margin-top: clamp(3rem, 8vw, 6rem);
+  padding-top: 2rem;
+  padding-bottom: 2.4rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.6rem 2rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--fg-dim);
+}
+
+.footer-line {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.98rem;
+  letter-spacing: 0;
+  color: var(--fg);
+}
+
+.site-footer a {
+  text-decoration: none;
+  color: var(--fg);
+}
+
+.site-footer a:hover {
+  color: var(--accent);
+}
+
+/* ---------------- Reveal ---------------- */
+
+.js .reveal {
+  opacity: 0;
+}
+
+/* ---------------- Responsive ---------------- */
+
+@media (max-width: 860px) {
+  .nav-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    position: fixed;
+    inset: 3.6rem 0 auto 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0.6rem var(--gutter) 1.2rem;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.35s var(--ease), transform 0.35s var(--ease), visibility 0.35s;
+  }
+
+  .nav-links.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 0.8rem 0;
+    font-size: 0.85rem;
+  }
+
+  .nav-boring {
+    padding-left: 0;
+    border-left: 0;
+    margin-top: 0.6rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .log-item {
+    grid-template-columns: 1fr auto;
+    gap: 0.2rem 1rem;
+  }
+
+  .log-date {
+    grid-column: 1;
+  }
+
+  .log-type {
+    grid-column: 2;
+    text-align: right;
+  }
+
+  .log-body {
+    grid-column: 1 / -1;
+  }
+
+  .log-draft {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .door {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    transition: none;
+  }
+
+  .js .reveal {
+    opacity: 1;
+  }
+}

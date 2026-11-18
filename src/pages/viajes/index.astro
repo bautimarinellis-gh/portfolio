@@ -1,0 +1,107 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { published, byDateDesc, formatMonth } from '../../lib/content';
+
+const viajes = (await published('viajes')).sort(byDateDesc);
+---
+
+<Base title="Viajes" current="viajes" nightStart={0.2} fire={0.6}>
+  <header class="page-head wrap">
+    <p class="page-kicker">00:40</p>
+    <h1 class="page-title">Viajes</h1>
+    <p class="page-lede">Lugares a los que fui, contados con fotos y poco texto.</p>
+  </header>
+
+  <section class="wrap trips">
+    {viajes.length === 0 && <p class="empty">Todavía no subí ningún viaje.</p>}
+    {
+      viajes.map((v, i) => (
+        <a class={`trip reveal ${i % 2 ? 'trip--alt' : ''}`} href={`/viajes/${v.id}`}>
+          <div class="trip-photo">
+            <Image src={v.data.cover} alt="" widths={[480, 800, 1200]} sizes="(max-width: 760px) 100vw, 60vw" />
+          </div>
+          <div class="trip-text">
+            <p class="mono dim">
+              {formatMonth(v.data.date)}
+              {v.data.coords && <> · {v.data.coords}</>}
+            </p>
+            <h2 class="trip-title">{v.data.place}</h2>
+            <p class="trip-sub">{v.data.title}</p>
+            {v.data.draft && <span class="log-draft">borrador</span>}
+          </div>
+        </a>
+      ))
+    }
+  </section>
+</Base>
+
+<style>
+  .trips {
+    display: grid;
+    gap: clamp(3rem, 8vw, 6rem);
+  }
+
+  .trip {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    align-items: end;
+    gap: clamp(1.4rem, 4vw, 3rem);
+    text-decoration: none;
+  }
+
+  .trip--alt {
+    grid-template-columns: 1fr 1.6fr;
+  }
+
+  .trip--alt .trip-photo {
+    order: 2;
+  }
+
+  .trip-photo {
+    overflow: hidden;
+    border-radius: 2px;
+    aspect-ratio: 3 / 2;
+    background: #0c0e14;
+  }
+
+  .trip-photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.85);
+    transition: transform 1.6s var(--ease), filter 1.2s var(--ease);
+  }
+
+  .trip:hover .trip-photo :global(img) {
+    transform: scale(1.03);
+    filter: saturate(1);
+  }
+
+  .trip-title {
+    margin-top: 0.6rem;
+    font-family: var(--serif-display);
+    font-weight: 340;
+    font-size: clamp(2rem, 1.4rem + 2.4vw, 3.4rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variation-settings: "SOFT" 70;
+  }
+
+  .trip-sub {
+    margin-top: 0.6rem;
+    font-style: italic;
+    color: var(--fg-dim);
+  }
+
+  @media (max-width: 760px) {
+    .trip,
+    .trip--alt {
+      grid-template-columns: 1fr;
+    }
+
+    .trip--alt .trip-photo {
+      order: 0;
+    }
+  }
+</style>

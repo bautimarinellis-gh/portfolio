@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroScene from '../components/HeroScene.tsx';
+import Ahora from '../components/Ahora.astro';
+import LogList from '../components/LogList.astro';
+import { getLog } from '../lib/content';
+import '../styles/hero.css';
+
+const log = (await getLog()).slice(0, 8);
+
+// Para usar un clip propio: dejalo en /public/video/ y pasá video="/video/archivo.mp4"
+// (y opcionalmente poster="/video/archivo.jpg") a <HeroScene>.
+const words = [
+  { text: 'Bautista', br: true },
+  { text: 'Marinelli', dim: true },
+  { text: 'Scaglia', dim: true },
+];
+---
+
+<Base nightStart={0} fire={1}>
+  <HeroScene client:load words={words}>
+    <p>
+      Rosario, 23 años. Acá guardo los viajes, lo que leo, lo que veo y lo que entreno. Las cosas aburridas están
+      aparte.
+    </p>
+    <div class="links-row">
+      <a href="/bitacora" class="link-quiet">Bitácora</a>
+      <a href="/sobre-mi" class="link-quiet">Sobre mí</a>
+      <a href="/cosas-aburridas" class="link-quiet">Cosas aburridas <small>cv</small></a>
+    </div>
+  </HeroScene>
+
+  <section class="section wrap">
+    <header class="section-head reveal">
+      <span class="hour">22:40</span>
+      <h2>Lo último</h2>
+    </header>
+    <Ahora />
+  </section>
+
+  <section class="section wrap">
+    <header class="section-head reveal">
+      <span class="hour">01:10</span>
+      <h2>Bitácora</h2>
+      <a href="/bitacora" class="link-quiet more-link">todo</a>
+    </header>
+    <LogList items={log} />
+  </section>
+
+  <section class="section wrap">
+    <a class="door reveal" href="/cosas-aburridas">
+      <div>
+        <p class="mono dim">05:50 — ya casi es de día</p>
+        <p class="door-title">Cosas aburridas</p>
+        <p class="door-sub">Laburo, estudios y proyectos. Si llegaste buscando el CV, es por acá.</p>
+      </div>
+      <span class="door-arrow">entrar →</span>
+    </a>
+  </section>
+</Base>

@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import LogList from '../components/LogList.astro';
+import { getLog, typeLabel, type LogType } from '../lib/content';
+
+const log = await getLog();
+const types = [...new Set(log.map((l) => l.type))] as LogType[];
+---
+
+<Base title="Bitácora" current="bitacora" nightStart={0.15} fire={0.7}>
+  <header class="page-head wrap">
+    <p class="page-kicker">23:30</p>
+    <h1 class="page-title">Bitácora</h1>
+    <p class="page-lede">Todo lo que fui dejando acá, en orden: viajes, películas, libros, entrenamiento y alguna nota.</p>
+  </header>
+
+  <section class="wrap">
+    {
+      types.length > 1 && (
+        <div class="filters" data-filters role="group" aria-label="Filtrar por tipo">
+          <button type="button" data-filter="todo" aria-pressed="true">
+            todo
+          </button>
+          {types.map((t) => (
+            <button type="button" data-filter={t} aria-pressed="false">
+              {typeLabel[t]}
+            </button>
+          ))}
+        </div>
+      )
+    }
+    <LogList items={log} grouped />
+  </section>
+</Base>
