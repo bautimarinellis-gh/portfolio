@@ -1,0 +1,90 @@
+---
+// Fachada liviana: muestra la miniatura y recién al hacer clic carga
+// el reproductor (youtube-nocookie). Nada de YouTube hasta que lo pidas.
+interface Props {
+  id: string;
+  title: string;
+}
+const { id, title } = Astro.props;
+const valid = /^[\w-]{11}$/.test(id);
+---
+
+<div class="yt" data-yt={valid ? id : undefined} data-title={title}>
+  {
+    valid ? (
+      <button type="button" class="yt-play" aria-label={`Reproducir: ${title}`}>
+        <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" width="480" height="360" />
+        <span class="yt-icon mono">▶ reproducir</span>
+      </button>
+    ) : (
+      <div class="yt-missing mono">falta el ID de YouTube</div>
+    )
+  }
+</div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('.yt[data-yt]').forEach((el) => {
+      el.querySelector('.yt-play')?.addEventListener('click', () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${el.dataset.yt}?autoplay=1&rel=0`;
+        iframe.title = el.dataset.title ?? 'Video';
+        iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+        iframe.allowFullscreen = true;
+        el.replaceChildren(iframe);
+      });
+    });
+  });
+</script>
+
+<style>
+  .yt {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #0a0c12;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+
+  .yt :global(iframe),
+  .yt-play,
+  .yt-play img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .yt-play {
+    padding: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .yt-play img {
+    object-fit: cover;
+    filter: saturate(0.75) brightness(0.75);
+    transition: filter 0.8s var(--ease);
+  }
+
+  .yt-play:hover img {
+    filter: saturate(1) brightness(0.9);
+  }
+
+  .yt-icon {
+    position: absolute;
+    left: 1.2rem;
+    bottom: 1rem;
+    color: var(--fg);
+    font-size: 0.78rem;
+  }
+
+  .yt-missing {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--fg-faint);
+  }
+</style>

@@ -1,0 +1,133 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** night = lo personal, day = cosas aburridas */
+  theme?: 'night' | 'day';
+  /** en qué punto de la noche arranca esta página (0 = recién prendido, 1 = amanece) */
+  nightStart?: number;
+  /** intensidad del fogón en esta página */
+  fire?: number;
+  current?: string;
+  image?: string;
+}
+
+const {
+  title,
+  description = 'Bautista Marinelli Scaglia. Rosario. Viajes, libros, películas, movimiento, y también las cosas aburridas: laburo, estudios y proyectos.',
+  theme = 'night',
+  nightStart = 0,
+  fire = 1,
+  current = '',
+  image,
+} = Astro.props;
+
+const fullTitle = title ? `${title} — Bautista Marinelli Scaglia` : 'Bautista Marinelli Scaglia';
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image ?? '/og.jpg', Astro.site);
+
+const personal = [
+  { href: '/bitacora', label: 'bitácora', key: 'bitacora' },
+  { href: '/viajes', label: 'viajes', key: 'viajes' },
+  { href: '/estante', label: 'estante', key: 'estante' },
+  { href: '/movimiento', label: 'movimiento', key: 'movimiento' },
+  { href: '/sobre-mi', label: 'sobre mí', key: 'sobre-mi' },
+];
+---
+
+<!doctype html>
+<html lang="es" data-theme={theme} data-night-start={nightStart} data-fire={fire}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={theme === 'day' ? '#efe8da' : '#07080c'} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="es_AR" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title="Bitácora — Bautista Marinelli Scaglia" href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <script is:inline>
+      // Oculta lo que Motion va a revelar. Si algo falla, a los 2.5 s se muestra igual.
+      document.documentElement.classList.add('js');
+      setTimeout(function () {
+        if (!window.__skyReady) document.documentElement.classList.remove('js');
+      }, 2500);
+    </script>
+
+    <ClientRouter fallback="swap" />
+  </head>
+
+  <body>
+    <!-- El cielo persiste entre páginas: no se reinicia al navegar -->
+    <div class="sky" aria-hidden="true" transition:persist="sky">
+      <canvas id="sky-back"></canvas>
+      <div class="firelight" data-fire-target></div>
+      <div class="dawn"></div>
+    </div>
+    <canvas class="embers" id="sky-front" aria-hidden="true" transition:persist="embers"></canvas>
+
+    <a class="skip" href="#contenido">Saltar al contenido</a>
+
+    <header class="site-header">
+      <nav class="nav" aria-label="Principal">
+        <a href="/" class="mark" aria-label="Inicio">bms<span class="mark-dot"></span></a>
+        <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="nav-links">menú</button>
+        <ul class="nav-links" id="nav-links">
+          {
+            personal.map((l) => (
+              <li>
+                <a href={l.href} aria-current={current === l.key ? 'page' : undefined}>
+                  {l.label}
+                </a>
+              </li>
+            ))
+          }
+          <li class="nav-boring">
+            <a href="/cosas-aburridas" aria-current={current === 'aburridas' ? 'page' : undefined}>cosas aburridas</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <footer class="site-footer wrap">
+      {
+        theme === 'day' && (
+          <p class="footer-line">
+            Ya es de día. <a href="/">Volver a la noche →</a>
+          </p>
+        )
+      }
+      <p>
+        © {new Date().getFullYear()} Bautista Marinelli Scaglia · Rosario · <a href="/rss.xml">rss</a>
+      </p>
+    </footer>
+
+    <script>
+      import { setupSite } from '../scripts/site.js';
+      setupSite();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,70 @@
+---
+// "Ahora": qué estoy leyendo, qué vi, qué entreno y dónde estuve.
+// Sale solo de lo último de cada colección: no hay que mantenerlo aparte.
+import { published, byDateDesc, formatDate, getPelis } from '../lib/content';
+
+const [libros, pelis, movimiento, viajes] = await Promise.all([
+  published('libros'),
+  getPelis(),
+  published('movimiento'),
+  published('viajes'),
+]);
+
+// leyendo ahora; si no, el último con fecha
+const reading = libros.find((l) => l.data.reading) ?? libros.filter((l) => l.data.date).sort(byDateDesc)[0];
+const peli = pelis[0];
+const mov = movimiento.sort(byDateDesc)[0];
+const viaje = viajes.sort(byDateDesc)[0];
+
+const items = [
+  reading && {
+    label: reading.data.reading ? 'leyendo' : 'lo último que leí',
+    value: reading.data.title,
+    sub: reading.data.author,
+    href: `/estante#${reading.id}`,
+    date: reading.data.date,
+  },
+  peli && {
+    label: 'lo último que vi',
+    value: peli.title,
+    sub: peli.line ?? [peli.director, peli.year].filter(Boolean).join(', '),
+    href: `/estante#${peli.id}`,
+    date: peli.date,
+  },
+  mov && {
+    label: 'entrenando',
+    value: mov.data.title,
+    sub: mov.data.note,
+    href: `/movimiento#${mov.id}`,
+    date: mov.data.date,
+  },
+  viaje && {
+    label: 'el último viaje',
+    value: viaje.data.place,
+    sub: viaje.data.title,
+    href: `/viajes/${viaje.id}`,
+    date: viaje.data.date,
+  },
+].filter(Boolean) as Array<{ label: string; value: string; sub?: string; href: string; date?: Date }>;
+
+const updated = items.reduce<Date | null>((max, i) => (i.date && (!max || i.date > max) ? i.date : max), null);
+---
+
+{
+  items.length > 0 && (
+    <div>
+      <div class="now">
+        {items.map((i) => (
+          <div class="now-item reveal">
+            <span class="now-label">{i.label}</span>
+            <a class="now-value" href={i.href}>
+              {i.value}
+            </a>
+            {i.sub && <span class="now-sub">{i.sub}</span>}
+          </div>
+        ))}
+      </div>
+      {updated && <p class="now-updated">actualizado el {formatDate(updated)}</p>}
+    </div>
+  )
+}

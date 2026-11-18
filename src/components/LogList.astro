@@ -1,0 +1,53 @@
+---
+import { formatDate, formatMonth, monthKey, typeLabel, type LogItem } from '../lib/content';
+
+interface Props {
+  items: LogItem[];
+  /** agrupar por mes (en /bitacora) */
+  grouped?: boolean;
+}
+
+const { items, grouped = false } = Astro.props;
+
+// para agrupar: insertar un encabezado cada vez que cambia el mes
+const rows: Array<{ month: string; label: string } | LogItem> = [];
+let lastMonth = '';
+for (const it of items) {
+  const key = monthKey(it.date);
+  if (grouped && key !== lastMonth) {
+    rows.push({ month: key, label: formatMonth(it.date) });
+    lastMonth = key;
+  }
+  rows.push(it);
+}
+---
+
+{
+  items.length === 0 ? (
+    <p class="empty">Todavía no hay nada acá. Pronto.</p>
+  ) : (
+    <ul class="log">
+      {rows.map((r) =>
+        'month' in r ? (
+          <li class="log-month" data-month={r.month}>
+            {r.label}
+          </li>
+        ) : (
+          <li class="log-item reveal" data-type={r.type} data-month-of={monthKey(r.date)}>
+            <time class="log-date" datetime={r.date.toISOString().slice(0, 10)}>
+              {formatDate(r.date)}
+            </time>
+            <span class="log-type">{typeLabel[r.type]}</span>
+            <div class="log-body">
+              <a class="log-title" href={r.href}>
+                {r.title}
+              </a>
+              {r.meta && <span class="log-meta">{r.meta}</span>}
+            </div>
+            {r.draft && <span class="log-draft">borrador</span>}
+          </li>
+        ),
+      )}
+    </ul>
+  )
+}
