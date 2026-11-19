@@ -4,9 +4,9 @@ import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
-// TODO: cuando elijamos dónde desplegar, cambiar `site` por el dominio real.
+// Publicado en Vercel. Si algún día hay dominio propio, cambiarlo acá.
 export default defineConfig({
-  site: 'https://bautimarinellis-gh.github.io',
+  site: 'https://bautista-marinelli.vercel.app',
   integrations: [react(), mdx(), sitemap()],
   prefetch: true,
   // secciones que cambiaron de nombre: los links viejos siguen funcionando
