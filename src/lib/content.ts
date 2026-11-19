@@ -1,5 +1,8 @@
 import { getCollection, type CollectionKey, type CollectionEntry } from 'astro:content';
 import type { ImageMetadata } from 'astro';
+import { formatDate, formatMonth, postPath, type Lang } from './i18n';
+
+export { formatDate, formatMonth };
 
 /** Borradores visibles en `astro dev`, ocultos en el build. */
 export async function published<C extends CollectionKey>(name: C): Promise<CollectionEntry<C>[]> {
@@ -71,10 +74,12 @@ export async function getPelis(): Promise<Peli[]> {
   return [...map.values()].sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
-export type LogType = 'viaje' | 'movimiento' | 'peli' | 'libro' | 'nota';
-
+/** Una entrada del blog, lista para listar. */
 export interface LogItem {
-  type: LogType;
+  /** clave para filtrar (el tipo, normalizado) */
+  kind: string;
+  /** el tipo tal como lo escribiste: "viaje", "una tarde"... */
+  label: string;
   date: Date;
   title: string;
   meta?: string;
@@ -82,73 +87,27 @@ export interface LogItem {
   draft: boolean;
 }
 
-export const typeLabel: Record<LogType, string> = {
-  viaje: 'viaje',
-  movimiento: 'movimiento',
-  peli: 'película',
-  libro: 'libro',
-  nota: 'nota',
-};
+export const kindOf = (tipo: string) =>
+  tipo
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '') // sin tildes: "día" y "dia" filtran igual
+    .trim();
 
-/** Todo lo personal junto, lo más nuevo primero. */
-export async function getLog(): Promise<LogItem[]> {
-  const [viajes, movimiento, pelis, libros, notas] = await Promise.all([
-    published('viajes'),
-    published('movimiento'),
-    getPelis(),
-    published('libros'),
-    published('notas'),
-  ]);
-
-  const items: LogItem[] = [
-    ...viajes.map((e) => ({
-      type: 'viaje' as const,
+/** Los posts del blog, el más nuevo primero. */
+export async function getPosts(lang: Lang = 'es'): Promise<LogItem[]> {
+  const posts = await published('blog');
+  return posts
+    .map((e) => ({
+      kind: kindOf(e.data.tipo),
+      label: e.data.tipo,
       date: e.data.date,
       title: e.data.title,
-      meta: e.data.place,
-      href: `/viajes/${e.id}`,
+      meta: [e.data.place, e.data.summary].filter(Boolean).join(' — ') || undefined,
+      href: postPath(e.id, lang),
       draft: e.data.draft,
-    })),
-    ...movimiento.map((e) => ({
-      type: 'movimiento' as const,
-      date: e.data.date,
-      title: e.data.title,
-      meta: e.data.note,
-      href: `/movimiento#${e.id}`,
-      draft: e.data.draft,
-    })),
-    ...pelis.map((p) => ({
-      type: 'peli' as const,
-      date: p.date,
-      title: p.title,
-      meta: [p.director, p.year].filter(Boolean).join(', ') + (p.rewatch ? ' · otra vez' : ''),
-      href: `/estante#${p.id}`,
-      draft: p.draft,
-    })),
-    // los libros sin fecha no entran en la bitácora (no hay cuándo)
-    ...libros.flatMap((e) => (e.data.date ? [{ ...e, date: e.data.date }] : [])).map((e) => ({
-      type: 'libro' as const,
-      date: e.date,
-      title: e.data.title,
-      meta: e.data.reading ? `${e.data.author} — leyéndolo` : e.data.author,
-      href: `/estante#${e.id}`,
-      draft: e.data.draft,
-    })),
-    ...notas.map((e) => ({
-      type: 'nota' as const,
-      date: e.data.date,
-      title: e.data.title,
-      href: `/notas/${e.id}`,
-      draft: e.data.draft,
-    })),
-  ];
-
-  return items.sort((a, b) => b.date.getTime() - a.date.getTime());
+    }))
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
-const dateFmt = new Intl.DateTimeFormat('es-AR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' });
-const monthFmt = new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-
-export const formatDate = (d: Date) => dateFmt.format(d).replace(/\./g, '');
-export const formatMonth = (d: Date) => monthFmt.format(d);
 export const monthKey = (d: Date) => `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;

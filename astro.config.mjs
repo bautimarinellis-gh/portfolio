@@ -9,4 +9,14 @@ export default defineConfig({
   site: 'https://bautimarinellis-gh.github.io',
   integrations: [react(), mdx(), sitemap()],
   prefetch: true,
+  // secciones que cambiaron de nombre: los links viejos siguen funcionando
+  redirects: {
+    '/cosas-aburridas': '/trabajo',
+    // viajes, movimiento y notas ahora son todos posts del blog
+    '/bitacora': '/blog',
+    '/viajes': '/blog',
+    '/movimiento': '/blog',
+    '/sobre-mi': '/',
+    '/work': '/en/work',
+  },
 });

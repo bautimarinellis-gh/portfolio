@@ -1,6 +1,6 @@
 # bms — página personal
 
-Hecha con [Astro](https://astro.build). La noche es lo personal; el día (`/cosas-aburridas`), lo profesional.
+Hecha con [Astro](https://astro.build). La noche es lo personal; el día (`/trabajo`), lo profesional.
 
 ```bash
 npm install
@@ -9,19 +9,34 @@ npm run build     # chequea tipos + contenido y genera /dist (sitio estático)
 npm run preview   # sirve /dist
 ```
 
-## Publicar algo nuevo
+## Publicar desde el celular (Pages CMS)
+
+La forma rápida: entrá a [app.pagescms.org](https://app.pagescms.org), iniciá sesión con GitHub y abrí
+este repo. Vas a ver **Blog** y **Libros**: completás título, fecha, tipo, texto, subís fotos o pegás
+un link de YouTube, y guardás. Cada guardado es un commit, y el hosting vuelve a publicar la página solo.
+
+- Solo puede guardar quien tiene permiso de escritura en el repo (o sea, vos). Conviene tener activada
+  la verificación en dos pasos en GitHub.
+- Las fotos se guardan en `src/assets/blog/` y la página las optimiza. Los posts creados desde el panel
+  quedan como `src/content/blog/AAAA-MM-DD-titulo.md`.
+- Para publicar sin que se vea todavía, marcá **Borrador**.
+- La configuración del panel está en `.pages.yml`.
+
+## Publicar algo nuevo (a mano)
 
 Todo vive en `src/content/`. Lo más fácil es copiar un archivo de ejemplo y cambiarlo.
 Mientras tenga `draft: true` se ve en `npm run dev` (con la etiqueta "borrador") pero **no se publica**.
 
 | Qué | Dónde | Qué completar |
 |---|---|---|
-| Viaje | `src/content/viajes/<nombre>/index.md` + fotos en la misma carpeta | `title`, `date`, `place`, `coords`, `cover`, `photos` |
+| Post del blog (un viaje, un entrenamiento, un día, una tarde…) | `src/content/blog/<nombre>/index.md` + fotos en la misma carpeta | `title`, `date`, `tipo` (texto libre: "viaje", "una tarde"…); opcionales: `place`, `coords`, `summary`, `cover`, `photos`, `youtube` (ID de un video **no listado**) y el texto abajo |
 | Película | **Sola, desde Letterboxd** (ver abajo). A mano solo si querés: `src/content/pelis/<nombre>.md` | `title`, `year`, `date`, `line`; `director` y `poster` opcionales |
-| Libro | `src/content/libros/<nombre>.md` | `title`, `author`, `year`; `date` (sin fecha no entra en la bitácora), `line`, `reading: true` si lo estás leyendo |
-| Entrenamiento | `src/content/movimiento/<nombre>.md` | `title`, `date`, `youtubeId` (subí el video a YouTube como **no listado**) |
-| Nota | `src/content/notas/<nombre>.md` | `title`, `date` y el texto abajo |
-| Proyecto / laburo | `src/content/proyectos/`, `src/content/experiencia/` | ver los existentes |
+| Libro | `src/content/libros/<nombre>.md` | `title`, `author`, `year`; `date` (sin fecha no entra en "lo último"), `line`, `reading: true` si lo estás leyendo |
+| Proyecto / laburo | `src/content/proyectos/`, `src/content/experiencia/` (versión en inglés en `en/`) | ver los existentes |
+
+Hay tres posts de ejemplo en `src/content/blog/`: uno con fotos (`ejemplo-costa`), uno con video
+(`ejemplo-entreno`) y uno solo con texto (`ejemplo-tarde`). Copiá el que se parezca a lo que querés
+publicar. Los filtros del blog se arman solos con los `tipo` que vayas usando.
 
 Las fechas van como `2026-11-18`. Si te equivocás en un campo, `npm run build` te dice cuál.
 

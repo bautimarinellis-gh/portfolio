@@ -1,49 +1,44 @@
 ---
-// "Ahora": qué estoy leyendo, qué vi, qué entreno y dónde estuve.
+// "Lo último": qué estoy leyendo, qué vi y el último post del blog.
 // Sale solo de lo último de cada colección: no hay que mantenerlo aparte.
-import { published, byDateDesc, formatDate, getPelis } from '../lib/content';
+import { published, byDateDesc, formatDate, getPelis, getPosts } from '../lib/content';
+import { route, ui, type Lang } from '../lib/i18n';
 
-const [libros, pelis, movimiento, viajes] = await Promise.all([
-  published('libros'),
-  getPelis(),
-  published('movimiento'),
-  published('viajes'),
-]);
+interface Props {
+  lang?: Lang;
+}
+const { lang = 'es' } = Astro.props;
+const t = ui[lang];
+const shelf = route('shelf', lang);
+
+const [libros, pelis, posts] = await Promise.all([published('libros'), getPelis(), getPosts(lang)]);
 
 // leyendo ahora; si no, el último con fecha
 const reading = libros.find((l) => l.data.reading) ?? libros.filter((l) => l.data.date).sort(byDateDesc)[0];
 const peli = pelis[0];
-const mov = movimiento.sort(byDateDesc)[0];
-const viaje = viajes.sort(byDateDesc)[0];
+const post = posts[0];
 
 const items = [
   reading && {
-    label: reading.data.reading ? 'leyendo' : 'lo último que leí',
+    label: reading.data.reading ? t.reading : t.lastRead,
     value: reading.data.title,
     sub: reading.data.author,
-    href: `/estante#${reading.id}`,
+    href: `${shelf}#${reading.id}`,
     date: reading.data.date,
   },
   peli && {
-    label: 'lo último que vi',
+    label: t.lastSeen,
     value: peli.title,
     sub: peli.line ?? [peli.director, peli.year].filter(Boolean).join(', '),
-    href: `/estante#${peli.id}`,
+    href: `${shelf}#${peli.id}`,
     date: peli.date,
   },
-  mov && {
-    label: 'entrenando',
-    value: mov.data.title,
-    sub: mov.data.note,
-    href: `/movimiento#${mov.id}`,
-    date: mov.data.date,
-  },
-  viaje && {
-    label: 'el último viaje',
-    value: viaje.data.place,
-    sub: viaje.data.title,
-    href: `/viajes/${viaje.id}`,
-    date: viaje.data.date,
+  post && {
+    label: `${t.onTheBlog} · ${post.label}`,
+    value: post.title,
+    sub: post.meta,
+    href: post.href,
+    date: post.date,
   },
 ].filter(Boolean) as Array<{ label: string; value: string; sub?: string; href: string; date?: Date }>;
 
@@ -64,7 +59,7 @@ const updated = items.reduce<Date | null>((max, i) => (i.date && (!max || i.date
           </div>
         ))}
       </div>
-      {updated && <p class="now-updated">actualizado el {formatDate(updated)}</p>}
+      {updated && <p class="now-updated">{t.latestUpdated} {formatDate(updated, lang)}</p>}
     </div>
   )
 }

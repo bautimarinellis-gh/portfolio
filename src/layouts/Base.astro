@@ -1,11 +1,13 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import Signature from '../components/Signature.astro';
+import { altPath, langFromPath, route, ui, type Lang } from '../lib/i18n';
 import '../styles/global.css';
 
 interface Props {
   title?: string;
   description?: string;
-  /** night = lo personal, day = cosas aburridas */
+  /** night = lo personal, day = trabajo */
   theme?: 'night' | 'day';
   /** en qué punto de la noche arranca esta página (0 = recién prendido, 1 = amanece) */
   nightStart?: number;
@@ -13,50 +15,57 @@ interface Props {
   fire?: number;
   current?: string;
   image?: string;
+  /** idioma de la página; si no se pasa, sale de la URL (/en/… = inglés) */
+  lang?: Lang;
 }
 
 const {
   title,
-  description = 'Bautista Marinelli Scaglia. Rosario. Viajes, libros, películas, movimiento, y también las cosas aburridas: laburo, estudios y proyectos.',
+  description,
   theme = 'night',
   nightStart = 0,
   fire = 1,
   current = '',
   image,
+  lang = langFromPath(Astro.url.pathname),
 } = Astro.props;
+
+const t = ui[lang];
+const desc = description ?? t.siteDescription;
+const other = altPath(Astro.url.pathname);
+const otherLang: Lang = lang === 'es' ? 'en' : 'es';
 
 const fullTitle = title ? `${title} — Bautista Marinelli Scaglia` : 'Bautista Marinelli Scaglia';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image ?? '/og.jpg', Astro.site);
 
 const personal = [
-  { href: '/bitacora', label: 'bitácora', key: 'bitacora' },
-  { href: '/viajes', label: 'viajes', key: 'viajes' },
-  { href: '/estante', label: 'estante', key: 'estante' },
-  { href: '/movimiento', label: 'movimiento', key: 'movimiento' },
-  { href: '/sobre-mi', label: 'sobre mí', key: 'sobre-mi' },
+  { href: route('blog', lang), label: t.nav.blog, key: 'blog' },
+  { href: route('shelf', lang), label: t.nav.shelf, key: 'estante' },
 ];
 ---
 
 <!doctype html>
-<html lang="es" data-theme={theme} data-night-start={nightStart} data-fire={fire}>
+<html lang={lang} data-theme={theme} data-night-start={nightStart} data-fire={fire}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{fullTitle}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={desc} />
     <meta name="theme-color" content={theme === 'day' ? '#efe8da' : '#07080c'} />
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={desc} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content="es_AR" />
+    <meta property="og:locale" content={lang === 'en' ? 'en_US' : 'es_AR'} />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate" type="application/rss+xml" title="Bitácora — Bautista Marinelli Scaglia" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Blog — Bautista Marinelli Scaglia" href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" hreflang={lang} href={canonical} />
+    <link rel="alternate" hreflang={otherLang} href={new URL(other, Astro.site)} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -85,12 +94,12 @@ const personal = [
     </div>
     <canvas class="embers" id="sky-front" aria-hidden="true" transition:persist="embers"></canvas>
 
-    <a class="skip" href="#contenido">Saltar al contenido</a>
+    <a class="skip" href="#contenido">{t.skip}</a>
 
     <header class="site-header">
       <nav class="nav" aria-label="Principal">
-        <a href="/" class="mark" aria-label="Inicio">bms<span class="mark-dot"></span></a>
-        <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="nav-links">menú</button>
+        <a href={route('home', lang)} class="mark" aria-label={lang === 'en' ? 'Home' : 'Inicio'}>bms<span class="mark-dot"></span></a>
+        <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="nav-links" data-open={t.menu} data-close={t.close}>{t.menu}</button>
         <ul class="nav-links" id="nav-links">
           {
             personal.map((l) => (
@@ -102,7 +111,10 @@ const personal = [
             ))
           }
           <li class="nav-boring">
-            <a href="/cosas-aburridas" aria-current={current === 'aburridas' ? 'page' : undefined}>cosas aburridas</a>
+            <a href={route('work', lang)} aria-current={current === 'trabajo' ? 'page' : undefined}>{t.nav.work}</a>
+          </li>
+          <li class="nav-lang">
+            <a href={other} hreflang={otherLang} lang={otherLang} aria-label={t.langSwitchLabel}>{t.langSwitch}</a>
           </li>
         </ul>
       </nav>
@@ -113,15 +125,19 @@ const personal = [
     </main>
 
     <footer class="site-footer wrap">
-      {
-        theme === 'day' && (
-          <p class="footer-line">
-            Ya es de día. <a href="/">Volver a la noche →</a>
-          </p>
-        )
-      }
+      <div class="footer-left">
+        <Signature />
+        {
+          theme === 'day' && (
+            <p class="footer-line">
+              {t.dayFooter}{' '}
+              <a href={route('home', lang)}>{t.backToNight}</a>
+            </p>
+          )
+        }
+      </div>
       <p>
-        © {new Date().getFullYear()} Bautista Marinelli Scaglia · Rosario · <a href="/rss.xml">rss</a>
+        © {new Date().getFullYear()} Bautista Marinelli Scaglia · Rosario
       </p>
     </footer>
 

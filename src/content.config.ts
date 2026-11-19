@@ -10,34 +10,50 @@ export const LETTERBOXD_USER = 'bautimarinellis';
 // Lo personal (la noche)
 // ------------------------------------------------------------------
 
-/** Un viaje: carpeta con index.md + las fotos al lado. */
-const viajes = defineCollection({
-  loader: glob({ pattern: '**/index.{md,mdx}', base: './src/content/viajes' }),
+/** Un campo vacío (lo que deja el panel de Pages CMS si no completás algo) cuenta como "no hay". */
+const blank = (v: unknown) => (v === '' || v === null ? undefined : v);
+
+/** Acepta el link entero de YouTube (o youtu.be, o shorts) y se queda con el ID. */
+const youtubeId = (v: unknown) => {
+  if (typeof v !== 'string' || !v.trim()) return undefined;
+  const s = v.trim();
+  const m = s.match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([\w-]{11})/);
+  return m ? m[1] : s;
+};
+
+/**
+ * El blog: un viaje, un entrenamiento, un día, una tarde... lo que sea.
+ * Dos formas de crear un post:
+ *  - desde el panel (Pages CMS): un archivo `AAAA-MM-DD-titulo.md`, con las fotos en src/assets/blog
+ *  - a mano: una carpeta con index.md y las fotos al lado
+ * `tipo` es texto libre ("viaje", "entrenamiento", "una tarde"): el blog arma los filtros con lo que uses.
+ */
+const blog = defineCollection({
+  loader: glob({ pattern: ['**/index.{md,mdx}', '*.{md,mdx}'], base: './src/content/blog' }),
   schema: ({ image }) =>
     z.object({
       title: z.string(),
       date: z.coerce.date(),
-      place: z.string(),
-      coords: z.string().optional(), // "38°00′S · 57°33′O"
-      summary: z.string().optional(),
-      cover: image(),
-      photos: z
-        .array(z.object({ src: image(), alt: z.string(), caption: z.string().optional() }))
-        .default([]),
-      draft: z.boolean().default(false),
+      tipo: z.preprocess(blank, z.string().default('un día')),
+      place: z.preprocess(blank, z.string().optional()),
+      coords: z.preprocess(blank, z.string().optional()), // "38°00′S · 57°33′O"
+      summary: z.preprocess(blank, z.string().optional()),
+      cover: z.preprocess(blank, image().optional()),
+      photos: z.preprocess(
+        (v) => (Array.isArray(v) ? v.filter((p) => p && typeof p === 'object' && (p as { src?: unknown }).src) : blank(v)),
+        z
+          .array(
+            z.object({
+              src: image(),
+              alt: z.preprocess(blank, z.string().default('')),
+              caption: z.preprocess(blank, z.string().optional()),
+            }),
+          )
+          .default([]),
+      ),
+      youtube: z.preprocess(youtubeId, z.string().optional()), // ID o link de un video de YouTube (no listado)
+      draft: z.preprocess(blank, z.boolean().default(false)),
     }),
-});
-
-/** Entrenamiento: videos en YouTube (no listados). */
-const movimiento = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/movimiento' }),
-  schema: z.object({
-    title: z.string(),
-    date: z.coerce.date(),
-    youtubeId: z.string(),
-    note: z.string().optional(),
-    draft: z.boolean().default(false),
-  }),
 });
 
 /** Películas desde tu diario de Letterboxd (RSS público). */
@@ -81,30 +97,21 @@ const libros = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      year: z.number().int().optional(),
+      year: z.preprocess((v) => (blank(v) === undefined ? undefined : Number(v)), z.number().int().optional()),
       author: z.string(),
       // cuándo lo terminé (o empecé, si reading). Opcional: sin fecha aparece
-      // en el estante pero no en la bitácora.
-      date: z.coerce.date().optional(),
-      reading: z.boolean().default(false),
-      line: z.string().optional(),
-      cover: image().optional(),
-      draft: z.boolean().default(false),
+      // en el estante pero no entra en "lo último".
+      date: z.preprocess(blank, z.coerce.date().optional()),
+      reading: z.preprocess(blank, z.boolean().default(false)),
+      line: z.preprocess(blank, z.string().optional()),
+      cover: z.preprocess(blank, image().optional()),
+      draft: z.preprocess(blank, z.boolean().default(false)),
     }),
 });
 
-/** Notas cortas, cuando haya algo para decir. */
-const notas = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/notas' }),
-  schema: z.object({
-    title: z.string(),
-    date: z.coerce.date(),
-    draft: z.boolean().default(false),
-  }),
-});
 
 // ------------------------------------------------------------------
-// Cosas aburridas (el día)
+// Trabajo (el día)
 // ------------------------------------------------------------------
 
 const proyectos = defineCollection({
@@ -131,4 +138,4 @@ const experiencia = defineCollection({
   }),
 });
 
-export const collections = { viajes, movimiento, letterboxd, pelis, libros, notas, proyectos, experiencia };
+export const collections = { blog, letterboxd, pelis, libros, proyectos, experiencia };

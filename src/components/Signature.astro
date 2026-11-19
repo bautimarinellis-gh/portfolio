@@ -1,0 +1,133 @@
+---
+// La firma de Bauti (hecha a mano en Excalidraw), calcada para que se escriba sola
+// cuando aparece en pantalla. Cada letra sale de un solo movimiento, sin pausas adentro:
+// la B, la M, la S y al final el subrayado. Entre letra y letra, apenas un respiro.
+// Cada letra es un único camino (sus partes, una detrás de otra).
+const letters: Array<{ name: string; d: string }> = [
+  {
+    name: 'b',
+    // palo, panza y la diagonal que cruza
+    d:
+      'M 130 157 C 175 175, 200 262, 207 415 ' +
+      'M 143 292 C 140 240, 200 185, 262 163 C 290 155, 285 185, 268 210 C 252 235, 230 262, 210 287 ' +
+      'M 175 485 C 220 400, 280 300, 318 248',
+  },
+  {
+    name: 'm',
+    // los picos y el palo que baja
+    d:
+      'M 210 287 C 250 255, 300 205, 322 190 C 328 205, 318 230, 314 248 C 325 190, 345 90, 357 76 ' +
+      'C 368 70, 366 180, 360 246 C 380 200, 410 120, 428 113 C 438 110, 432 160, 405 268 ' +
+      'M 404 268 C 395 320, 388 380, 384 428',
+  },
+  {
+    name: 's',
+    d:
+      'M 386 285 L 538 128 ' +
+      'M 388 282 C 440 235, 520 195, 575 192 C 595 192, 592 212, 575 232 C 540 280, 480 345, 437 395',
+  },
+  {
+    name: 'subrayado',
+    d: 'M 223 502 C 300 470, 390 430, 462 408',
+  },
+];
+
+// Velocidad de la birome, constante para toda la firma (unidades del dibujo por segundo).
+// Así ninguna letra va más rápido que otra: la duración sale del largo real de cada trazo.
+const PEN_SPEED = 900;
+const LETTER_GAP = 0.22; // la mano se levanta y se mueve a la letra siguiente
+
+/** Largo aproximado de un camino hecho solo de M, L y C (muestreando las curvas). */
+function pathLength(d: string): number {
+  const tokens = d.match(/[MLC]|-?\d*\.?\d+/g) ?? [];
+  let i = 0;
+  let cmd = 'M';
+  let x = 0;
+  let y = 0;
+  let len = 0;
+  const num = () => Number(tokens[i++]);
+  while (i < tokens.length) {
+    if (/[MLC]/.test(tokens[i])) cmd = tokens[i++];
+    if (cmd === 'M') {
+      x = num();
+      y = num();
+      cmd = 'L'; // coordenadas sueltas después de M siguen como L
+    } else if (cmd === 'L') {
+      const nx = num();
+      const ny = num();
+      len += Math.hypot(nx - x, ny - y);
+      x = nx;
+      y = ny;
+    } else {
+      const [x1, y1, x2, y2, x3, y3] = [num(), num(), num(), num(), num(), num()];
+      let px = x;
+      let py = y;
+      for (let s = 1; s <= 24; s++) {
+        const t = s / 24;
+        const u = 1 - t;
+        const qx = u * u * u * x + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t * x3;
+        const qy = u * u * u * y + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t * y3;
+        len += Math.hypot(qx - px, qy - py);
+        px = qx;
+        py = qy;
+      }
+      x = x3;
+      y = y3;
+    }
+  }
+  return len;
+}
+
+let delay = 0;
+const timed = letters.map((l, i) => {
+  if (i > 0) delay += LETTER_GAP;
+  const dur = Math.max(0.35, pathLength(l.d) / PEN_SPEED);
+  const item = { d: l.d, dur: +dur.toFixed(2), delay: +delay.toFixed(2) };
+  delay += dur;
+  return item;
+});
+---
+
+<svg class="signature" data-signature viewBox="118 62 492 452" role="img" aria-label="Firma de Bautista Marinelli Scaglia">
+  {timed.map((s) => <path d={s.d} data-dur={s.dur} data-delay={s.delay} />)}
+  <!-- la brasa que escribe -->
+  <circle class="sig-ember" r="7" cx="0" cy="0"></circle>
+</svg>
+
+<style>
+  .signature {
+    display: block;
+    width: 92px;
+    height: auto;
+    overflow: visible;
+    color: var(--fg);
+  }
+
+  /* sin JS (o con movimiento reducido) la firma se ve entera y quieta */
+  .signature path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.85;
+  }
+
+  /* recién escrito el trazo está caliente; se enfría hasta el color de la tinta */
+  .signature path.is-hot {
+    stroke: var(--accent);
+    opacity: 1;
+  }
+
+  .signature path.is-cooling {
+    transition:
+      stroke 2.2s ease,
+      opacity 2.2s ease;
+  }
+
+  .sig-ember {
+    fill: #ffd29a;
+    opacity: 0;
+    filter: drop-shadow(0 0 6px rgba(255, 150, 70, 0.95)) drop-shadow(0 0 18px rgba(255, 110, 40, 0.6));
+  }
+</style>

@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Te perdiste" nightStart={0.5} fire={0.6}>
+  <section class="page-head wrap lost">
+    <p class="page-kicker">04:04</p>
+    <h1 class="page-title">Te <em>perdiste.</em></h1>
+    <p class="page-lede">Es de noche y acá no hay nada. Pero el cielo está lindo: quedate un rato o volvé al fuego.</p>
+    <p class="page-lede lost-en" lang="en">You got lost. It's night and there's nothing here, but the sky is nice.</p>
+    <div class="links-row" style="margin-top:2.4rem">
+      <a href="/" class="link-quiet">Volver al fuego</a>
+      <a href="/blog" class="link-quiet">Blog</a>
+      <a href="/en/" class="link-quiet" lang="en">English</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lost-en {
+    margin-top: 0.8rem;
+    font-size: 0.95rem;
+    opacity: 0.75;
+  }
+
+  .lost {
+    min-height: 70svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+</style>
