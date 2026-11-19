@@ -11,6 +11,13 @@ media:
     output: ~/assets/blog
     rename: safe
     categories: [image]
+  - name: videos
+    label: Videos del blog
+    # los videos se sirven tal cual (sin procesar): clips cortos, idealmente mp4
+    input: public/videos
+    output: /videos
+    rename: safe
+    categories: [video]
   - name: libros
     label: Tapas de libros
     input: src/assets/libros
@@ -85,10 +92,17 @@ content:
           - name: caption
             label: Epígrafe
             type: string
+      - name: video
+        label: Video (clip corto)
+        type: file
+        description: Opcional. Un clip grabado con el celular, de hasta ~50 MB. Para videos largos, usá YouTube.
+        options:
+          media: videos
+          extensions: [mp4, mov, webm, m4v]
       - name: youtube
         label: Video de YouTube
         type: string
-        description: Opcional. Pegá el link (subilo como "no listado").
+        description: Opcional. Para videos largos. Pegá el link (subilo como "no listado").
       - name: draft
         label: Borrador (no se publica)
         type: boolean

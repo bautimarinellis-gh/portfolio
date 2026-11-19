@@ -52,6 +52,7 @@ const blog = defineCollection({
           .default([]),
       ),
       youtube: z.preprocess(youtubeId, z.string().optional()), // ID o link de un video de YouTube (no listado)
+      video: z.preprocess(blank, z.string().optional()), // un clip corto subido desde el panel (/videos/…)
       draft: z.preprocess(blank, z.boolean().default(false)),
     }),
 });
