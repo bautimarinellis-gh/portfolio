@@ -56,7 +56,7 @@ export const ui = {
     dayFooter: 'Ya es de día.',
     backToNight: 'Volver a la noche →',
     // home
-    heroLede: 'Rosario, 23 años. Acá guardo lo que voy viviendo, lo que leo y lo que veo. Lo profesional está aparte.',
+    heroLede: 'Un lugar para dejar lo que pasa: un viaje, un libro, una película, una tarde.',
     heroLinks: { blog: 'Blog', work: 'Trabajo', cv: 'cv' },
     clockNight: 'De noche, como acá.',
     latest: 'Lo último',
@@ -77,7 +77,7 @@ export const ui = {
     empty: 'Todavía no hay nada acá. Pronto.',
     draft: 'borrador',
     // blog
-    blogLede: 'Lo que va pasando, sin apuro.',
+    blogLede: 'Lo que queda de los días.',
     filterBy: 'Filtrar por tipo',
     backToBlog: '← todo el blog',
     stack: { next: 'siguiente', prev: 'anterior', open: 'ver grande', hint: 'arrastrá o tocá la foto para pasar' },
@@ -106,7 +106,7 @@ export const ui = {
     dayFooter: "It's daytime.",
     backToNight: 'Back to the night →',
     heroLede:
-      "Rosario, 23. This is where I keep what I'm living, reading and watching. The professional side is kept apart.",
+      'A place to leave what happens: a trip, a book, a film, an afternoon.',
     heroLinks: { blog: 'Blog', work: 'Work', cv: 'cv' },
     clockNight: 'Night here too.',
     latest: 'Latest',
@@ -126,7 +126,7 @@ export const ui = {
     hint: 'scroll slowly',
     empty: 'Nothing here yet. Soon.',
     draft: 'draft',
-    blogLede: 'Whatever comes along, no rush.',
+    blogLede: 'What the days leave behind.',
     filterBy: 'Filter by type',
     backToBlog: '← all posts',
     stack: { next: 'next', prev: 'previous', open: 'full size', hint: 'drag or tap the photo to flip through' },

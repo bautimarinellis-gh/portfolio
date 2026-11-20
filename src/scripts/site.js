@@ -16,9 +16,17 @@ export function setupSite() {
   });
   window.__skyReady = true;
 
+  // El titileo del fuego llega en cada cuadro; escribirlo en el CSS 60 veces por segundo obliga
+  // al navegador a recalcular estilos todo el tiempo. Con ~20 por segundo el ojo no lo distingue.
   let fireTargets = [];
+  let lastFire = -1;
+  let lastFireAt = 0;
   sky.onFire((fire) => {
-    const v = fire.toFixed(3);
+    const now = performance.now();
+    if (now - lastFireAt < 50 || Math.abs(fire - lastFire) < 0.01) return;
+    lastFire = fire;
+    lastFireAt = now;
+    const v = fire.toFixed(2);
     for (const el of fireTargets) el.style.setProperty('--fire', v);
   });
 

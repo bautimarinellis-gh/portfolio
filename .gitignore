@@ -8,3 +8,6 @@ ESENCIA.md
 .env
 .env.*
 !.env.example
+
+# ideas a futuro (solo local)
+IDEAS.md

@@ -136,22 +136,37 @@ function useWarmLetters(ref: React.RefObject<HTMLHeadingElement | null>, still: 
     let raf = 0;
     let mouse: { x: number; y: number } | null = null;
 
+    // Rendimiento: primero se leen todas las posiciones y después se escribe. Leer y escribir
+    // intercalado obligaba al navegador a recalcular el layout una vez por letra. Además, solo se
+    // escribe la letra que cambió, y si el mouse está lejos del nombre no se toca nada.
+    const last = new Map<HTMLSpanElement, string>();
     const paint = () => {
       raf = 0;
-      for (const ch of letters) {
-        const base = Number(ch.dataset.soft);
-        const baseW = Number(ch.dataset.wght);
+      const box = el.getBoundingClientRect();
+      const near =
+        mouse &&
+        mouse.x > box.left - RADIUS &&
+        mouse.x < box.right + RADIUS &&
+        mouse.y > box.top - RADIUS &&
+        mouse.y < box.bottom + RADIUS;
+      const rects = near ? letters.map((ch) => ch.getBoundingClientRect()) : null;
+      letters.forEach((ch, i) => {
         let k = 0;
-        if (mouse) {
-          const r = ch.getBoundingClientRect();
+        if (rects && mouse) {
+          const r = rects[i];
           const d = Math.hypot(mouse.x - (r.left + r.width / 2), mouse.y - (r.top + r.height / 2));
           k = Math.max(0, 1 - d / RADIUS);
           k = k * k * (3 - 2 * k); // suave en los bordes
         }
-        const soft = base + (100 - base) * k;
-        const wght = baseW + 150 * k;
-        ch.style.fontVariationSettings = `"SOFT" ${soft.toFixed(0)}, "opsz" 144, "wght" ${wght.toFixed(0)}`;
-      }
+        const base = Number(ch.dataset.soft);
+        const baseW = Number(ch.dataset.wght);
+        const soft = (base + (100 - base) * k).toFixed(0);
+        const wght = (baseW + 150 * k).toFixed(0);
+        const v = `"SOFT" ${soft}, "opsz" 144, "wght" ${wght}`;
+        if (last.get(ch) === v) return;
+        last.set(ch, v);
+        ch.style.fontVariationSettings = v;
+      });
     };
     const onMove = (e: PointerEvent) => {
       mouse = { x: e.clientX, y: e.clientY };
@@ -265,21 +280,31 @@ function Sea({ still, moonLight }: { still: boolean; moonLight: number }) {
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      buildGradients();
     };
 
     // posición de la luna en x (tiene que coincidir con .moon en CSS)
     const moonX = () => w * (w < 700 ? 0.74 : 0.7);
+
+    // los degradados no cambian entre cuadros: se arman una vez por tamaño
+    let water: CanvasGradient | null = null;
+    let fireGlow: CanvasGradient | null = null;
+    const buildGradients = () => {
+      water = ctx.createLinearGradient(0, 0, 0, h);
+      water.addColorStop(0, 'rgba(20, 28, 44, 0.96)');
+      water.addColorStop(0.25, 'rgba(9, 12, 20, 0.98)');
+      water.addColorStop(1, 'rgba(6, 7, 11, 1)');
+      fireGlow = ctx.createRadialGradient(w / 2, h * 1.15, 0, w / 2, h * 1.15, Math.max(w * 0.5, 420));
+      fireGlow.addColorStop(0, 'rgba(255, 128, 52, 0.22)');
+      fireGlow.addColorStop(1, 'rgba(255, 128, 52, 0)');
+    };
 
     const draw = (now: number) => {
       const t = now / 1000;
       ctx.clearRect(0, 0, w, h);
 
       // agua: oscura, apenas azul cerca del horizonte
-      const g = ctx.createLinearGradient(0, 0, 0, h);
-      g.addColorStop(0, 'rgba(20, 28, 44, 0.96)');
-      g.addColorStop(0.25, 'rgba(9, 12, 20, 0.98)');
-      g.addColorStop(1, 'rgba(6, 7, 11, 1)');
-      ctx.fillStyle = g;
+      ctx.fillStyle = water!;
       ctx.fillRect(0, 0, w, h);
 
       // línea de horizonte
@@ -319,10 +344,7 @@ function Sea({ still, moonLight }: { still: boolean; moonLight: number }) {
       }
 
       // luz del fuego llegando al agua, abajo al centro
-      const fg = ctx.createRadialGradient(w / 2, h * 1.15, 0, w / 2, h * 1.15, Math.max(w * 0.5, 420));
-      fg.addColorStop(0, 'rgba(255, 128, 52, 0.22)');
-      fg.addColorStop(1, 'rgba(255, 128, 52, 0)');
-      ctx.fillStyle = fg;
+      ctx.fillStyle = fireGlow!;
       ctx.fillRect(0, 0, w, h);
     };
 

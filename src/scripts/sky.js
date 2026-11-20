@@ -8,6 +8,9 @@
 // `night` va de 0 (recién prendido el fuego) a 1 (amanece). Lo maneja el scroll.
 
 const TAU = Math.PI * 2;
+const STAR_COLORS = ['rgb(240, 236, 228)', 'rgb(255, 214, 170)', 'rgb(196, 214, 255)'];
+const LEVELS = 16; // niveles de brillo para agrupar estrellas (más = titileo más suave)
+const STAR_FRAME_MS = 1000 / 30; // las estrellas casi no se mueven: alcanza con 30 cuadros por segundo
 
 export function createSky(back, front, { reducedMotion = false } = {}) {
   const bctx = back.getContext('2d');
@@ -16,6 +19,10 @@ export function createSky(back, front, { reducedMotion = false } = {}) {
   let h = 0;
   let dpr = 1;
   let stars = [];
+  const coreBuckets = Array.from({ length: 3 * (LEVELS + 1) }, () => []);
+  const haloBuckets = Array.from({ length: 3 * (LEVELS + 1) }, () => []);
+  let lastStarsAt = -Infinity;
+  let starDt = 0;
   let embers = [];
   let shooting = null;
   let nextShootingAt = performance.now() + rand(6000, 14000);
@@ -82,14 +89,16 @@ export function createSky(back, front, { reducedMotion = false } = {}) {
       const r = srand();
       const warm = r < 0.12;
       const blue = !warm && r < 0.3;
+      const a = Math.atan2(dy, dx);
       stars.push({
-        a: Math.atan2(dy, dx),
+        ca: Math.cos(a),
+        sa: Math.sin(a),
         d: Math.hypot(dx, dy),
         size: dim ? 0.35 + srand() * 0.4 : Math.pow(srand(), 3.2) * 1.5 + 0.3,
         alpha: dim ? 0.18 + srand() * 0.25 : 0.35 + srand() * 0.6,
         tw: 0.4 + srand() * 1.6,
         ph: srand() * TAU,
-        color: warm ? '255, 214, 170' : blue ? '196, 214, 255' : '240, 236, 228',
+        ci: warm ? 1 : blue ? 2 : 0,
       });
     };
 
@@ -221,7 +230,8 @@ export function createSky(back, front, { reducedMotion = false } = {}) {
     // ¿el mouse anda cerca? se dibuja de a poco; si se va, se borra despacio
     const c = { x: (pos.gacrux.x + pos.acrux.x) / 2, y: (pos.gacrux.y + pos.acrux.y) / 2 };
     const near = Math.hypot(pointer.x - c.x, pointer.y - c.y) < 140;
-    cruxReveal += ((near ? 1 : 0) - cruxReveal) * (near ? 0.045 : 0.025);
+    // (calibrado para 30 cuadros por segundo, el ritmo de la capa de estrellas)
+    cruxReveal += ((near ? 1 : 0) - cruxReveal) * (near ? 0.09 : 0.05);
     if (reducedMotion) cruxReveal = near ? 1 : 0;
 
     // las estrellas, un poco más brillantes que el resto
@@ -305,28 +315,51 @@ export function createSky(back, front, { reducedMotion = false } = {}) {
     // al amanecer se apagan; con el cielo nublado se ven menos
     const starFade = (1 - smooth(0.82, 1, night) * 0.75) * (1 - (cloudCover / 100) * 0.35);
 
+    // Rendimiento: en vez de un fill por estrella (~1.300 por cuadro), se agrupan por color y
+    // por nivel de brillo, y se pinta cada grupo de una vez. Las chiquitas van como cuadraditos
+    // (a ese tamaño no se distinguen de un círculo y cuestan mucho menos).
+    for (const b of coreBuckets) b.length = 0;
+    for (const b of haloBuckets) b.length = 0;
+    const cosR = Math.cos(rot);
+    const sinR = Math.sin(rot);
     for (const s of stars) {
-      const a = s.a + rot;
-      const x = p.x + Math.cos(a) * s.d;
-      const y = p.y + Math.sin(a) * s.d;
+      // rotar (s.a + rot) con la identidad del coseno de la suma: sin trigonometría por estrella
+      const x = p.x + s.d * (s.ca * cosR - s.sa * sinR);
+      const y = p.y + s.d * (s.sa * cosR + s.ca * sinR);
       if (x < -4 || x > w + 4 || y < -4 || y > h + 4) continue;
       const twinkle = reducedMotion ? 1 : 0.72 + 0.28 * Math.sin(t * s.tw + s.ph);
-      const alpha = s.alpha * twinkle * starFade;
-      bctx.fillStyle = `rgb(${s.color})`;
-      if (s.size > 1.25) {
-        bctx.globalAlpha = alpha * 0.18;
-        bctx.beginPath();
-        bctx.arc(x, y, s.size * 3, 0, TAU);
-        bctx.fill();
-      }
-      bctx.globalAlpha = alpha;
-      bctx.beginPath();
-      bctx.arc(x, y, s.size, 0, TAU);
-      bctx.fill();
+      const lv = Math.round(s.alpha * twinkle * starFade * LEVELS);
+      if (lv === 0) continue;
+      const k = s.ci * (LEVELS + 1) + lv;
+      coreBuckets[k].push(x, y, s.size);
+      if (s.size > 1.25) haloBuckets[k].push(x, y, s.size * 3);
     }
+    paintBuckets(haloBuckets, 0.18);
+    paintBuckets(coreBuckets, 1);
     bctx.globalAlpha = 1;
     drawCrux(now, rot, starFade);
     drawClouds(dt);
+  }
+
+  function paintBuckets(buckets, mult) {
+    for (let k = 0; k < buckets.length; k++) {
+      const b = buckets[k];
+      if (!b.length) continue;
+      bctx.fillStyle = STAR_COLORS[(k / (LEVELS + 1)) | 0];
+      bctx.globalAlpha = ((k % (LEVELS + 1)) / LEVELS) * mult;
+      bctx.beginPath();
+      for (let i = 0; i < b.length; i += 3) {
+        const x = b[i];
+        const y = b[i + 1];
+        const r = b[i + 2];
+        if (r < 1) bctx.rect(x - r, y - r, r * 2, r * 2);
+        else {
+          bctx.moveTo(x + r, y);
+          bctx.arc(x, y, r, 0, TAU);
+        }
+      }
+      bctx.fill();
+    }
   }
 
   function drawShooting(now, dt) {
@@ -349,15 +382,16 @@ export function createSky(back, front, { reducedMotion = false } = {}) {
     const len = 14;
     const x2 = shooting.x - shooting.vx * len;
     const y2 = shooting.y - shooting.vy * len;
-    const grad = bctx.createLinearGradient(shooting.x, shooting.y, x2, y2);
+    // va en el lienzo de adelante, que se limpia en cada cuadro (el de las estrellas va a 30 fps)
+    const grad = fctx.createLinearGradient(shooting.x, shooting.y, x2, y2);
     grad.addColorStop(0, `rgba(255, 246, 232, ${alpha})`);
     grad.addColorStop(1, 'rgba(255, 246, 232, 0)');
-    bctx.strokeStyle = grad;
-    bctx.lineWidth = 1.1;
-    bctx.beginPath();
-    bctx.moveTo(shooting.x, shooting.y);
-    bctx.lineTo(x2, y2);
-    bctx.stroke();
+    fctx.strokeStyle = grad;
+    fctx.lineWidth = 1.1;
+    fctx.beginPath();
+    fctx.moveTo(shooting.x, shooting.y);
+    fctx.lineTo(x2, y2);
+    fctx.stroke();
     shooting.x += shooting.vx * dt * 60;
     shooting.y += shooting.vy * dt * 60;
     if (k >= 1) shooting = null;
@@ -409,10 +443,15 @@ export function createSky(back, front, { reducedMotion = false } = {}) {
   }
 
   function draw(now, dt) {
-    drawStars(now, dt);
+    starDt += dt;
+    if (reducedMotion || now - lastStarsAt >= STAR_FRAME_MS) {
+      drawStars(now, starDt);
+      lastStarsAt = now;
+      starDt = 0;
+    }
     if (reducedMotion) return;
+    drawEmbers(now, dt); // limpia el lienzo de adelante
     drawShooting(now, dt);
-    drawEmbers(now, dt);
     drawRain(dt);
   }
 

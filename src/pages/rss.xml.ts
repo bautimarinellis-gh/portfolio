@@ -6,7 +6,7 @@ export async function GET(context: APIContext) {
   const posts = (await getPosts()).filter((p) => !p.draft);
   return rss({
     title: 'Blog — Bautista Marinelli Scaglia',
-    description: 'Un viaje, un entrenamiento, un día, una tarde.',
+    description: 'Lo que queda de los días.',
     site: context.site!,
     items: posts.map((p) => ({
       title: p.title,

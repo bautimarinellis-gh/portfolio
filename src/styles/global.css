@@ -13,7 +13,7 @@
   --coal: #d4332b; /* el único rojo */
   --dawn: #f2b766;
   --warm: #f1d9b8; /* texto iluminado por el fuego */
-  --header-bg: rgba(7, 8, 12, 0.72);
+  --header-bg: rgba(7, 8, 12, 0.9);
 
   --serif-display: "Fraunces", Georgia, "Times New Roman", serif;
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
@@ -38,7 +38,7 @@
   --accent: #b8501c;
   --coal: #b8281f;
   --warm: #1c1a16;
-  --header-bg: rgba(239, 232, 218, 0.82);
+  --header-bg: rgba(239, 232, 218, 0.94);
   color-scheme: light;
 }
 
@@ -74,18 +74,19 @@ body {
 body::after {
   content: "";
   position: fixed;
-  inset: -50%;
+  inset: -10%;
   z-index: 350;
   pointer-events: none;
-  opacity: 0.055;
-  mix-blend-mode: overlay;
+  /* Sin mix-blend-mode: mezclar el grano con toda la pantalla obligaba a recomponerla en cada
+     cuadro de las animaciones (el cielo, el mar). En modo normal y más tenue se ve igual. */
+  opacity: 0.032;
+  will-change: transform;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
   animation: grain 1.2s steps(6) infinite;
 }
 
 :root[data-theme="day"] body::after {
-  opacity: 0.07;
-  mix-blend-mode: multiply;
+  opacity: 0.045;
 }
 
 /* el grano se mueve apenas, como en una proyección */
@@ -294,9 +295,8 @@ code {
 }
 
 .site-header.is-scrolled {
+  /* sin desenfoque de fondo: detrás se mueve el cielo y lo recalculaba en cada cuadro */
   background: var(--header-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border-bottom-color: var(--line);
 }
 
