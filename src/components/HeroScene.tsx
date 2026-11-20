@@ -45,7 +45,7 @@ export default function HeroScene({ words, video, poster, lastfm, lang = 'es', c
   }, [reduce, mx]);
 
   const still = !!reduce;
-  const clock = useRosarioClock(t.clockNight);
+  const clock = useRosarioClock();
   const titleRef = useRef<HTMLHeadingElement>(null);
   useWarmLetters(titleRef, still);
   // la fase se calcula en el navegador (el día de la visita, no el del build)
@@ -186,8 +186,8 @@ function useWarmLetters(ref: React.RefObject<HTMLHeadingElement | null>, still: 
   }, [ref, still]);
 }
 
-/** "Rosario, 23:14. De noche, como acá." — se actualiza cada 30 s */
-function useRosarioClock(nightNote: string) {
+/** "Rosario, 23:14" — se actualiza cada 30 s */
+function useRosarioClock() {
   const [text, setText] = useState('Rosario');
   useEffect(() => {
     const fmt = new Intl.DateTimeFormat('es-AR', {
@@ -196,15 +196,11 @@ function useRosarioClock(nightNote: string) {
       hour12: false,
       timeZone: 'America/Argentina/Buenos_Aires',
     });
-    const tick = () => {
-      const time = fmt.format(new Date());
-      const hour = Number(time.slice(0, 2));
-      setText(hour >= 20 || hour < 7 ? `Rosario, ${time}. ${nightNote}` : `Rosario, ${time}`);
-    };
+    const tick = () => setText(`Rosario, ${fmt.format(new Date())}`);
     tick();
     const id = setInterval(tick, 30000);
     return () => clearInterval(id);
-  }, [nightNote]);
+  }, []);
   return text;
 }
 
