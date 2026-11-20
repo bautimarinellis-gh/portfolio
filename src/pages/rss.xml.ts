@@ -1,18 +1,19 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
-import { getLog, typeLabel } from '../lib/content';
+import { getPosts } from '../lib/content';
 
 export async function GET(context: APIContext) {
-  const log = (await getLog()).filter((i) => !i.draft);
+  const posts = (await getPosts()).filter((p) => !p.draft);
   return rss({
-    title: 'Bitácora — Bautista Marinelli Scaglia',
-    description: 'Viajes, películas, libros y lo que entreno.',
+    title: 'Blog — Bautista Marinelli Scaglia',
+    description: 'Un viaje, un entrenamiento, un día, una tarde.',
     site: context.site!,
-    items: log.map((i) => ({
-      title: `${typeLabel[i.type]}: ${i.title}`,
-      pubDate: i.date,
-      description: i.meta,
-      link: i.href,
+    items: posts.map((p) => ({
+      title: p.title,
+      pubDate: p.date,
+      description: p.meta,
+      categories: [p.label],
+      link: p.href,
     })),
     customData: '<language>es-ar</language>',
   });

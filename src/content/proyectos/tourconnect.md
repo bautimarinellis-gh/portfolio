@@ -1,8 +1,7 @@
 ---
 title: TourConnect
 order: 1
-status: En desarrollo · Trabajo Final de Ingeniería
-active: true
+status: Terminado · Trabajo Final de Ingeniería
 problem: >-
   Los mayoristas turísticos gestionan precios por WhatsApp, reservas por email y márgenes
   en Excel: sin trazabilidad y sin control de acceso diferenciado frente a sus agencias minoristas.

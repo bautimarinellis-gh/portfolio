@@ -1,0 +1,148 @@
+---
+// Arquitectura de TourConnect (Trabajo Final de Ingeniería), en trazo de tinta para el tema de día.
+// Los datos salen del README del repo: React 19 + Vite, Express con cadena de middlewares,
+// MongoDB Atlas, asistente (clasificador + armado de consultas, con Gemini y modo básico),
+// Mercado Pago en modo prueba y auditoría.
+interface Props {
+  lang?: 'es' | 'en';
+}
+const { lang = 'es' } = Astro.props;
+
+const t = {
+  es: {
+    title: 'Arquitectura de TourConnect',
+    roles: ['Mayorista', 'Agencia', 'Admin'],
+    client: 'Cliente',
+    api: 'API REST',
+    chain: ['JWT (cookie HttpOnly)', 'rol', 'tenant', 'permisos', 'límites de uso'],
+    controllers: 'controladores',
+    db: 'MongoDB Atlas',
+    dbSub: 'datos separados por mayorista',
+    assistant: 'Asistente',
+    assistantSub: 'clasificador → consulta',
+    assistantSub2: 'Gemini o modo básico',
+    payments: 'Mercado Pago',
+    paymentsSub: 'pagos (modo prueba)',
+    audit: 'Auditoría',
+    auditSub: 'cada cambio queda registrado',
+  },
+  en: {
+    title: 'TourConnect architecture',
+    roles: ['Wholesaler', 'Agency', 'Admin'],
+    client: 'Client',
+    api: 'REST API',
+    chain: ['JWT (HttpOnly cookie)', 'role', 'tenant', 'permissions', 'usage limits'],
+    controllers: 'controllers',
+    db: 'MongoDB Atlas',
+    dbSub: 'data scoped per wholesaler',
+    assistant: 'Assistant',
+    assistantSub: 'classifier → query',
+    assistantSub2: 'Gemini or basic mode',
+    payments: 'Mercado Pago',
+    paymentsSub: 'payments (test mode)',
+    audit: 'Audit trail',
+    auditSub: 'every change is recorded',
+  },
+}[lang];
+---
+
+<figure class="tc-diagram">
+  <div class="tc-scroll">
+    <svg viewBox="0 0 780 360" role="img" aria-label={t.title}>
+      <defs>
+        <marker id="tc-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 8 4 L 0 8" fill="none" stroke="currentColor" stroke-width="1.2"></path>
+        </marker>
+      </defs>
+
+      <g fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+        <!-- roles -->
+        {t.roles.map((_, i) => <rect x="16" y={46 + i * 56} width="104" height="34" rx="2" />)}
+        {t.roles.map((_, i) => <path d={`M 120 ${63 + i * 56} C 140 ${63 + i * 56}, 140 119, 162 119`} marker-end="url(#tc-arrow)" opacity="0.6" />)}
+
+        <!-- cliente -->
+        <rect x="164" y="94" width="120" height="50" rx="2"></rect>
+        <path d="M 284 119 L 330 119" marker-end="url(#tc-arrow)"></path>
+
+        <!-- API con la cadena de middlewares -->
+        <rect x="332" y="22" width="190" height="212" rx="2"></rect>
+        {t.chain.map((_, i) => <rect x="348" y={60 + i * 26} width="158" height="20" rx="10" opacity="0.55" />)}
+        <path d="M 427 190 L 427 200" opacity="0.5"></path>
+
+        <!-- base de datos -->
+        <path d="M 522 128 L 590 128" marker-end="url(#tc-arrow)"></path>
+        <ellipse cx="672" cy="98" rx="76" ry="13"></ellipse>
+        <path d="M 596 98 V 158 C 596 175, 748 175, 748 158 V 98"></path>
+
+        <!-- servicios -->
+        <path d="M 380 234 C 380 262, 160 256, 160 284" marker-end="url(#tc-arrow)" opacity="0.6"></path>
+        <path d="M 427 234 L 427 284" marker-end="url(#tc-arrow)" opacity="0.6"></path>
+        <path d="M 474 234 C 474 262, 672 256, 672 284" marker-end="url(#tc-arrow)" opacity="0.6"></path>
+        <rect x="60" y="286" width="200" height="60" rx="2"></rect>
+        <rect x="342" y="286" width="170" height="60" rx="2"></rect>
+        <rect x="580" y="286" width="184" height="60" rx="2"></rect>
+        <!-- el asistente consulta la base -->
+        <path d="M 260 300 C 420 300, 560 200, 640 172" stroke-dasharray="3 4" marker-end="url(#tc-arrow)" opacity="0.45"></path>
+      </g>
+
+      <g class="tc-text" fill="currentColor">
+        {t.roles.map((r, i) => <text x="68" y={68 + i * 56} text-anchor="middle" class="tc-label">{r}</text>)}
+        <text x="224" y="116" text-anchor="middle" class="tc-title">{t.client}</text>
+        <text x="224" y="133" text-anchor="middle" class="tc-sub">React 19 + Vite</text>
+        <text x="427" y="44" text-anchor="middle" class="tc-title">{t.api}</text>
+        {t.chain.map((c, i) => <text x="427" y={74 + i * 26} text-anchor="middle" class="tc-chip">{c}</text>)}
+        <text x="427" y="218" text-anchor="middle" class="tc-sub">Express · {t.controllers}</text>
+        <text x="672" y="124" text-anchor="middle" class="tc-title">{t.db}</text>
+        <text x="672" y="142" text-anchor="middle" class="tc-sub">{t.dbSub}</text>
+        <text x="160" y="310" text-anchor="middle" class="tc-title">{t.assistant}</text>
+        <text x="160" y="326" text-anchor="middle" class="tc-sub">{t.assistantSub}</text>
+        <text x="160" y="340" text-anchor="middle" class="tc-sub">{t.assistantSub2}</text>
+        <text x="427" y="312" text-anchor="middle" class="tc-title">{t.payments}</text>
+        <text x="427" y="330" text-anchor="middle" class="tc-sub">{t.paymentsSub}</text>
+        <text x="672" y="312" text-anchor="middle" class="tc-title">{t.audit}</text>
+        <text x="672" y="330" text-anchor="middle" class="tc-sub">{t.auditSub}</text>
+      </g>
+    </svg>
+  </div>
+</figure>
+
+<style>
+  .tc-diagram {
+    margin-block: clamp(2rem, 5vw, 3rem);
+    color: var(--fg);
+  }
+
+  /* en pantallas chicas el diagrama se desliza de costado en vez de achicarse hasta no leerse */
+  .tc-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tc-scroll svg {
+    display: block;
+    width: 100%;
+    min-width: 640px;
+    height: auto;
+  }
+
+  .tc-title {
+    font-family: var(--serif-display);
+    font-size: 15px;
+  }
+
+  .tc-label {
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  .tc-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    opacity: 0.65;
+  }
+
+  .tc-chip {
+    font-family: var(--mono);
+    font-size: 10px;
+  }
+</style>

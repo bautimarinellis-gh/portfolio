@@ -1,0 +1,183 @@
+---
+import { Image } from 'astro:assets';
+// El índice del blog, en castellano (/blog) o en inglés (/en/blog).
+import Base from '../../layouts/Base.astro';
+import { published, byDateDesc, formatDate, formatMonth, kindOf, monthKey } from '../../lib/content';
+import { postPath, ui, type Lang } from '../../lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = ui[lang];
+
+const posts = (await published('blog')).sort(byDateDesc);
+
+// los filtros salen de los tipos que usaste (en el orden en que aparecen)
+const kinds = new Map<string, string>();
+for (const p of posts) {
+  const k = kindOf(p.data.tipo);
+  if (!kinds.has(k)) kinds.set(k, p.data.tipo);
+}
+
+// agrupar por mes
+const groups: Array<{ key: string; label: string; items: typeof posts }> = [];
+for (const p of posts) {
+  const key = monthKey(p.data.date);
+  let g = groups[groups.length - 1];
+  if (!g || g.key !== key) {
+    g = { key, label: formatMonth(p.data.date, lang), items: [] };
+    groups.push(g);
+  }
+  g.items.push(p);
+}
+---
+
+<Base title={t.blogTitle} current="blog" nightStart={0.15} fire={0.7} lang={lang}>
+  <header class="page-head wrap">
+    <p class="page-kicker">23:30</p>
+    <h1 class="page-title">{t.blogTitle}</h1>
+    <p class="page-lede">{t.blogLede}</p>
+  </header>
+
+  <section class="wrap">
+    {
+      kinds.size > 1 && (
+        <div class="filters" data-filters role="group" aria-label={t.filterBy}>
+          <button type="button" data-filter="todo" aria-pressed="true">
+            {t.all}
+          </button>
+          {[...kinds].map(([k, label]) => (
+            <button type="button" data-filter={k} aria-pressed="false">
+              {label}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    {posts.length === 0 && <p class="empty">{t.empty}</p>}
+
+    <ul class="posts">
+      {
+        groups.map((g) => (
+          <>
+            <li class="log-month" data-month={g.key}>
+              {g.label}
+            </li>
+            {g.items.map((p) => (
+              <li class="post reveal" data-type={kindOf(p.data.tipo)} data-month-of={g.key}>
+                <a href={postPath(p.id, lang)} class="post-link">
+                  <div class="post-meta mono">
+                    <time datetime={p.data.date.toISOString().slice(0, 10)}>{formatDate(p.data.date, lang)}</time>
+                    <span class="post-kind">{p.data.tipo}</span>
+                    {p.data.draft && <span class="log-draft">{t.draft}</span>}
+                  </div>
+                  <div class="post-text">
+                    <h2 class="post-title">{p.data.title}</h2>
+                    {(p.data.place || p.data.summary) && (
+                      <p class="post-sub">{[p.data.place, p.data.summary].filter(Boolean).join(' — ')}</p>
+                    )}
+                  </div>
+                  {p.data.cover && (
+                    <div class="post-thumb">
+                      <Image src={p.data.cover} alt="" width={280} />
+                    </div>
+                  )}
+                </a>
+              </li>
+            ))}
+          </>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .posts {
+    list-style: none;
+  }
+
+  .post {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .post-link {
+    display: grid;
+    grid-template-columns: 9rem 1fr auto;
+    align-items: center;
+    gap: 1.6rem;
+    padding-block: 1.5rem;
+    text-decoration: none;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    color: var(--fg-dim);
+    font-size: 0.72rem;
+  }
+
+  .post-kind {
+    color: var(--accent);
+  }
+
+  .post-title {
+    font-family: var(--serif-display);
+    font-weight: 380;
+    font-size: clamp(1.3rem, 1.05rem + 1vw, 1.9rem);
+    line-height: 1.15;
+    font-variation-settings: "SOFT" 60;
+    transition: color 0.3s;
+  }
+
+  .post-link:hover .post-title {
+    color: var(--warm);
+  }
+
+  .post-sub {
+    margin-top: 0.3rem;
+    font-style: italic;
+    color: var(--fg-dim);
+  }
+
+  .post-thumb {
+    width: 140px;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: 2px;
+    background: #0c0e14;
+  }
+
+  .post-thumb :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.85);
+    transition: transform 1.4s var(--ease), filter 1s var(--ease);
+  }
+
+  .post-link:hover .post-thumb :global(img) {
+    transform: scale(1.05);
+    filter: saturate(1);
+  }
+
+  @media (max-width: 700px) {
+    .post-link {
+      grid-template-columns: 1fr auto;
+      gap: 0.6rem 1rem;
+    }
+
+    .post-meta {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      gap: 0.8rem;
+    }
+
+    .post-thumb {
+      width: 96px;
+    }
+  }
+</style>

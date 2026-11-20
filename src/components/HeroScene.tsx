@@ -1,5 +1,8 @@
 import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
+import { litPath, moonPhase, type MoonPhase } from '../lib/moon';
+import NowPlaying from './NowPlaying';
+import { ui, type Lang } from '../lib/i18n';
 
 type Word = { text: string; dim?: boolean; br?: boolean };
 
@@ -9,12 +12,16 @@ interface Props {
   /** Clip propio (mp4/webm en /public). Si está, reemplaza la escena dibujada. */
   video?: string;
   poster?: string;
+  /** Last.fm: si están, aparece lo que está sonando */
+  lastfm?: { user?: string; apiKey?: string };
+  lang?: Lang;
   children?: ReactNode;
 }
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-export default function HeroScene({ words, video, poster, children }: Props) {
+export default function HeroScene({ words, video, poster, lastfm, lang = 'es', children }: Props) {
+  const t = ui[lang];
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
 
@@ -38,7 +45,12 @@ export default function HeroScene({ words, video, poster, children }: Props) {
   }, [reduce, mx]);
 
   const still = !!reduce;
-  const clock = useRosarioClock();
+  const clock = useRosarioClock(t.clockNight);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  useWarmLetters(titleRef, still);
+  // la fase se calcula en el navegador (el día de la visita, no el del build)
+  const [moon, setMoon] = useState<MoonPhase | null>(null);
+  useEffect(() => setMoon(moonPhase()), []);
 
   return (
     <section ref={ref} className={`hero ${video ? 'hero--video' : ''}`} aria-labelledby="hero-title">
@@ -47,13 +59,17 @@ export default function HeroScene({ words, video, poster, children }: Props) {
           <video className="hero-video" src={video} poster={poster} autoPlay muted loop playsInline preload="metadata" />
         ) : (
           <>
-            <motion.div className="moon" style={still ? undefined : { y: moonY, x: moonX }} />
+            <motion.div className="moon" style={still ? undefined : { y: moonY, x: moonX }}>
+              {moon && <Moon phase={moon} />}
+            </motion.div>
             <motion.div className="sea" style={still ? undefined : { y: seaY }}>
-              <Sea still={still} />
+              <Sea still={still} moonLight={moon ? 0.2 + moon.illumination * 0.8 : 0.8} />
             </motion.div>
             <motion.div className="dunes" style={still ? undefined : { y: duneY, x: duneX }}>
               <Dunes />
             </motion.div>
+            {/* el fuego (fuera de cuadro, abajo) ilumina la arena: titila con --fire */}
+            <div className="sand-glow" data-fire-target />
           </>
         )}
         <div className="hero-vignette" />
@@ -68,17 +84,23 @@ export default function HeroScene({ words, video, poster, children }: Props) {
         >
           32°57′S · 60°39′O — <span>{clock}</span>
         </motion.p>
+        <NowPlaying user={lastfm?.user} apiKey={lastfm?.apiKey} labels={{ now: t.nowPlaying, last: t.lastPlayed }} />
 
-        <h1 id="hero-title" className="hero-title">
+        <h1 id="hero-title" className="hero-title" ref={titleRef} aria-label={words.map((w) => w.text).join(' ')}>
           {words.map((w, i) => (
             <Fragment key={i}>
               <motion.span
                 className={w.dim ? 'w w--dim' : 'w'}
+                aria-hidden="true"
                 initial={still ? false : { opacity: 0, y: '0.35em', filter: 'blur(10px)' }}
                 animate={{ opacity: 1, y: '0em', filter: 'blur(0px)' }}
                 transition={{ duration: 1.5, delay: 0.45 + i * 0.14, ease }}
               >
-                {w.text}
+                {[...w.text].map((c, j) => (
+                  <span key={j} className="ch" data-soft={w.dim ? 100 : 60} data-wght={w.dim ? 300 : 330}>
+                    {c}
+                  </span>
+                ))}
               </motion.span>
               {w.br ? <br /> : ' '}
             </Fragment>
@@ -95,13 +117,62 @@ export default function HeroScene({ words, video, poster, children }: Props) {
         </motion.div>
       </motion.div>
 
-      <p className="hero-hint mono" aria-hidden="true">bajá despacio</p>
+      <p className="hero-hint mono" aria-hidden="true">{t.hint}</p>
     </section>
   );
 }
 
+/**
+ * Las letras del nombre se "calientan" con el mouse cerca: se ablandan (eje SOFT de Fraunces)
+ * y ganan un poco de peso, como si les llegara el calor del fuego. Inspirado en
+ * "Variable Proximity" de React Bits. Sin mouse (celular) o con movimiento reducido, no hace nada.
+ */
+function useWarmLetters(ref: React.RefObject<HTMLHeadingElement | null>, still: boolean) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || still || !window.matchMedia('(pointer: fine)').matches) return;
+    const letters = [...el.querySelectorAll<HTMLSpanElement>('.ch')];
+    const RADIUS = 170;
+    let raf = 0;
+    let mouse: { x: number; y: number } | null = null;
+
+    const paint = () => {
+      raf = 0;
+      for (const ch of letters) {
+        const base = Number(ch.dataset.soft);
+        const baseW = Number(ch.dataset.wght);
+        let k = 0;
+        if (mouse) {
+          const r = ch.getBoundingClientRect();
+          const d = Math.hypot(mouse.x - (r.left + r.width / 2), mouse.y - (r.top + r.height / 2));
+          k = Math.max(0, 1 - d / RADIUS);
+          k = k * k * (3 - 2 * k); // suave en los bordes
+        }
+        const soft = base + (100 - base) * k;
+        const wght = baseW + 150 * k;
+        ch.style.fontVariationSettings = `"SOFT" ${soft.toFixed(0)}, "opsz" 144, "wght" ${wght.toFixed(0)}`;
+      }
+    };
+    const onMove = (e: PointerEvent) => {
+      mouse = { x: e.clientX, y: e.clientY };
+      if (!raf) raf = requestAnimationFrame(paint);
+    };
+    const onLeave = () => {
+      mouse = null;
+      if (!raf) raf = requestAnimationFrame(paint);
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    document.addEventListener('pointerleave', onLeave);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerleave', onLeave);
+    };
+  }, [ref, still]);
+}
+
 /** "Rosario, 23:14. De noche, como acá." — se actualiza cada 30 s */
-function useRosarioClock() {
+function useRosarioClock(nightNote: string) {
   const [text, setText] = useState('Rosario');
   useEffect(() => {
     const fmt = new Intl.DateTimeFormat('es-AR', {
@@ -113,20 +184,71 @@ function useRosarioClock() {
     const tick = () => {
       const time = fmt.format(new Date());
       const hour = Number(time.slice(0, 2));
-      setText(hour >= 20 || hour < 7 ? `Rosario, ${time}. De noche, como acá.` : `Rosario, ${time}`);
+      setText(hour >= 20 || hour < 7 ? `Rosario, ${time}. ${nightNote}` : `Rosario, ${time}`);
     };
     tick();
     const id = setInterval(tick, 30000);
     return () => clearInterval(id);
-  }, []);
+  }, [nightNote]);
   return text;
+}
+
+/* ------------------------------------------------------------------
+   La luna, con la fase real del día y vista desde el hemisferio sur
+   ------------------------------------------------------------------ */
+function Moon({ phase }: { phase: MoonPhase }) {
+  const r = 20;
+  // en el sur la creciente se ilumina a la izquierda: espejamos lo que en el norte va a la derecha
+  const southern = true;
+  const mirror = phase.waxing === southern;
+  const lit = litPath(phase.phase, r);
+  return (
+    <svg
+      viewBox={`${-r - 1} ${-r - 1} ${2 * r + 2} ${2 * r + 2}`}
+      className="moon-svg"
+      role="img"
+      aria-label={`Luna de hoy: ${Math.round(phase.illumination * 100)} % iluminada`}
+      style={{ '--moon-light': phase.illumination } as React.CSSProperties}
+    >
+      <defs>
+        <radialGradient id="moon-lit" cx="40%" cy="38%" r="70%">
+          <stop offset="0" stopColor="#fbf5e9" />
+          <stop offset="0.65" stopColor="#ece0c6" />
+          <stop offset="1" stopColor="#cdbd9c" />
+        </radialGradient>
+        <filter id="moon-soft" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="1.1" />
+        </filter>
+        <clipPath id="moon-lit-clip">
+          <path d={lit} transform={mirror ? 'scale(-1 1)' : undefined} />
+        </clipPath>
+      </defs>
+      {/* la parte en sombra, apenas visible (luz cenicienta) */}
+      <circle r={r} fill="#1a2030" opacity="0.85" />
+      <g clipPath="url(#moon-lit-clip)">
+        <circle r={r} fill="url(#moon-lit)" />
+        {/* mares lunares: manchas suaves, siempre en el mismo lugar */}
+        <g fill="#8d8270" opacity="0.32" filter="url(#moon-soft)">
+          <ellipse cx="-6" cy="-7" rx="6.5" ry="4.8" />
+          <ellipse cx="3" cy="-9" rx="4.2" ry="3.4" />
+          <ellipse cx="6.5" cy="-1" rx="4.4" ry="5.6" />
+          <ellipse cx="-3" cy="4" rx="5.2" ry="3.6" />
+          <ellipse cx="-9" cy="2" rx="3" ry="4" />
+          <ellipse cx="2" cy="11" rx="2.6" ry="2" />
+        </g>
+      </g>
+    </svg>
+  );
 }
 
 /* ------------------------------------------------------------------
    El mar: reflejo de la luna temblando y un poco del fuego en la orilla
    ------------------------------------------------------------------ */
-function Sea({ still }: { still: boolean }) {
+function Sea({ still, moonLight }: { still: boolean; moonLight: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // cuánta luz da la luna hoy (luna nueva casi no se refleja); en un ref para no reiniciar el loop
+  const light = useRef(moonLight);
+  light.current = moonLight;
 
   useEffect(() => {
     const canvas = canvasRef.current!;
@@ -173,10 +295,27 @@ function Sea({ still }: { still: boolean }) {
         const spread = 6 + k * w * 0.09;
         const wobble = Math.sin(t * 0.9 + i * 0.7) * spread * 0.35 + Math.sin(t * 2.3 + i * 1.9) * spread * 0.15;
         const len = (4 + k * 46) * (0.5 + 0.5 * Math.sin(t * 1.3 + i * 2.1));
-        const alpha = (1 - k) * 0.55 * (0.5 + 0.5 * Math.sin(t * 2.7 + i * 1.3));
+        const alpha = (1 - k) * 0.55 * light.current * (0.5 + 0.5 * Math.sin(t * 2.7 + i * 1.3));
         if (alpha < 0.02 || len < 1) continue;
         ctx.fillStyle = `rgba(244, 234, 214, ${alpha})`;
         ctx.fillRect(mx + wobble - len / 2, y, len, 1 + k * 1.2);
+      }
+
+      // espuma: olas finas que llegan a la orilla y se esconden detrás del médano
+      for (let i = 0; i < 3; i++) {
+        const q = (t / 9 + i / 3) % 1; // 0 aparece → 1 llega
+        const y0 = (0.24 + q * 0.2) * h;
+        const a = Math.sin(q * Math.PI) * 0.14 * (0.6 + 0.4 * light.current);
+        if (a < 0.01) continue;
+        ctx.strokeStyle = `rgba(214, 224, 240, ${a})`;
+        ctx.lineWidth = 0.8 + q * 0.6;
+        ctx.beginPath();
+        for (let x = 0; x <= w; x += 8) {
+          const y = y0 + Math.sin(x * 0.009 + t * 0.4 + i * 2) * 2.2 + Math.sin(x * 0.031 + i) * 1.1;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
       }
 
       // luz del fuego llegando al agua, abajo al centro

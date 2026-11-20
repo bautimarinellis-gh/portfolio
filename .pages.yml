@@ -1,0 +1,158 @@
+# Pages CMS (https://app.pagescms.org): el panel para publicar desde el celular.
+# Entrás con tu cuenta de GitHub; solo puede guardar quien tiene permiso de escritura en este repo.
+# Cada vez que guardás se crea un commit, y el hosting vuelve a publicar la página solo.
+
+media:
+  - name: blog
+    label: Fotos del blog
+    # las fotos se guardan acá (dentro de src/ para que Astro las optimice)...
+    input: src/assets/blog
+    # ...y en el post quedan escritas con este prefijo (~ = src, ver tsconfig.json)
+    output: ~/assets/blog
+    rename: safe
+    categories: [image]
+  - name: videos
+    label: Videos del blog
+    # los videos se sirven tal cual (sin procesar): clips cortos, idealmente mp4
+    input: public/videos
+    output: /videos
+    rename: safe
+    categories: [video]
+  - name: libros
+    label: Tapas de libros
+    input: src/assets/libros
+    output: ~/assets/libros
+    rename: safe
+    categories: [image]
+
+content:
+  # ---------------------------------------------------------------- blog
+  - name: blog
+    label: Blog
+    type: collection
+    path: src/content/blog
+    filename: "{year}-{month}-{day}-{primary}.md"
+    format: yaml-frontmatter
+    subfolders: false
+    view:
+      primary: title
+      fields: [title, date, tipo, draft]
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Título
+        type: string
+        required: true
+      - name: date
+        label: Fecha
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: tipo
+        label: Tipo
+        type: string
+        description: 'Lo que quieras: "viaje", "entrenamiento", "un día", "una tarde"… Los filtros del blog se arman con esto.'
+        default: un día
+      - name: place
+        label: Lugar
+        type: string
+        description: Opcional. Ej. "Chapadmalal".
+      - name: coords
+        label: Coordenadas
+        type: string
+        description: 'Opcional. Ej. "38°10′S · 57°38′O".'
+      - name: summary
+        label: Resumen
+        type: string
+        description: Opcional. Una línea.
+      - name: cover
+        label: Portada
+        type: image
+        description: Opcional. La foto grande de arriba.
+        options:
+          media: blog
+      - name: photos
+        label: Fotos
+        type: object
+        list: true
+        description: Opcional. Se muestran como una pila de fotos.
+        fields:
+          - name: src
+            label: Foto
+            type: image
+            options:
+              media: blog
+          - name: alt
+            label: Qué se ve (para quien no ve la foto)
+            type: string
+          - name: caption
+            label: Epígrafe
+            type: string
+      - name: video
+        label: Video (clip corto)
+        type: file
+        description: Opcional. Un clip grabado con el celular, de hasta ~50 MB. Para videos largos, usá YouTube.
+        options:
+          media: videos
+          extensions: [mp4, mov, webm, m4v]
+      - name: youtube
+        label: Video de YouTube
+        type: string
+        description: Opcional. Para videos largos. Pegá el link (subilo como "no listado").
+      - name: draft
+        label: Borrador (no se publica)
+        type: boolean
+        default: false
+      - name: body
+        label: Texto
+        type: rich-text
+        options:
+          format: markdown
+          media: blog
+
+  # ---------------------------------------------------------------- libros
+  - name: libros
+    label: Libros
+    type: collection
+    path: src/content/libros
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    view:
+      primary: title
+      fields: [title, author, reading]
+      sort: [title]
+    fields:
+      - name: title
+        label: Título
+        type: string
+        required: true
+      - name: author
+        label: Autor
+        type: string
+        required: true
+      - name: year
+        label: Año de publicación
+        type: number
+      - name: date
+        label: Cuándo lo terminé
+        type: date
+        default: ""
+        options:
+          format: yyyy-MM-dd
+      - name: reading
+        label: Lo estoy leyendo
+        type: boolean
+        default: false
+      - name: line
+        label: Una frase
+        type: string
+        description: Opcional. Una línea, no una reseña.
+      - name: cover
+        label: Tapa
+        type: image
+        options:
+          media: libros

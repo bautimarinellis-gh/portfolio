@@ -1,0 +1,68 @@
+---
+// La home, en castellano (/) o en inglés (/en).
+import Base from '../../layouts/Base.astro';
+import HeroScene from '../HeroScene.tsx';
+import Ahora from '../Ahora.astro';
+import LogList from '../LogList.astro';
+import { getPosts } from '../../lib/content';
+import { route, ui, type Lang } from '../../lib/i18n';
+import '../../styles/hero.css';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = ui[lang];
+const posts = (await getPosts(lang)).slice(0, 6);
+
+// Para usar un clip propio: dejalo en /public/video/ y pasá video="/video/archivo.mp4"
+// (y opcionalmente poster="/video/archivo.jpg") a <HeroScene>.
+const words = [
+  { text: 'Bautista', br: true },
+  { text: 'Marinelli', dim: true },
+  { text: 'Scaglia', dim: true },
+];
+---
+
+<Base nightStart={0} fire={1} lang={lang}>
+  <HeroScene
+    client:load
+    words={words}
+    lang={lang}
+    lastfm={{ user: import.meta.env.PUBLIC_LASTFM_USER, apiKey: import.meta.env.PUBLIC_LASTFM_API_KEY }}
+  >
+    <p>{t.heroLede}</p>
+    <div class="links-row">
+      <a href={route('blog', lang)} class="link-quiet">{t.heroLinks.blog}</a>
+      <a href={route('work', lang)} class="link-quiet">{t.heroLinks.work} <small>{t.heroLinks.cv}</small></a>
+    </div>
+  </HeroScene>
+
+  <section class="section wrap">
+    <header class="section-head reveal">
+      <span class="hour">22:40</span>
+      <h2>{t.latest}</h2>
+    </header>
+    <Ahora lang={lang} />
+  </section>
+
+  <section class="section wrap">
+    <header class="section-head reveal">
+      <span class="hour">01:10</span>
+      <h2>{t.blogTitle}</h2>
+      <a href={route('blog', lang)} class="link-quiet more-link">{t.all}</a>
+    </header>
+    <LogList items={posts} lang={lang} />
+  </section>
+
+  <section class="section wrap">
+    <a class="door reveal" href={route('work', lang)}>
+      <div>
+        <p class="mono dim">{t.doorKicker}</p>
+        <p class="door-title">{t.doorTitle}</p>
+        <p class="door-sub">{t.doorSub}</p>
+      </div>
+      <span class="door-arrow">{t.doorCta}</span>
+    </a>
+  </section>
+</Base>

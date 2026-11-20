@@ -3,3 +3,8 @@ node_modules/
 dist/
 .astro/
 ESENCIA.md
+
+# claves locales (Last.fm, etc.)
+.env
+.env.*
+!.env.example

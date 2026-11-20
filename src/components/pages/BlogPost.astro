@@ -1,0 +1,158 @@
+---
+import { getImage, Image } from 'astro:assets';
+import { render } from 'astro:content';
+// Un post del blog, en castellano o en inglés (el texto del post queda como lo escribió Bauti).
+import type { CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PhotoStack, { type Photo } from '../PhotoStack.tsx';
+import YouTube from '../YouTube.astro';
+import { formatDate } from '../../lib/content';
+import { route, ui, type Lang } from '../../lib/i18n';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  lang: Lang;
+}
+const { post, lang } = Astro.props;
+const t = ui[lang];
+const { Content } = await render(post);
+const d = post.data;
+
+// fotos: versión responsive para la grilla y grande para el lightbox
+const photos: Photo[] = await Promise.all(
+  d.photos.map(async (p) => {
+    const grid = await getImage({ src: p.src, widths: [640, 1000, 1500], format: 'webp' });
+    const full = await getImage({ src: p.src, width: 2000, format: 'webp' });
+    return {
+      src: grid.src,
+      srcset: grid.srcSet.attribute,
+      full: full.src,
+      width: p.src.width,
+      height: p.src.height,
+      alt: p.alt,
+      caption: p.caption,
+    };
+  }),
+);
+
+const meta = [formatDate(d.date, lang), d.tipo, d.coords].filter(Boolean).join(' · ');
+---
+
+<Base
+  title={d.title}
+  description={d.summary ?? d.title}
+  current="blog"
+  lang={lang}
+  nightStart={0.25}
+  fire={0.55}
+  image={d.cover?.src}
+>
+  {
+    d.cover ? (
+      <header class="post-hero">
+        <Image src={d.cover} alt="" widths={[800, 1400, 2200]} sizes="100vw" loading="eager" class="post-cover" />
+        <div class="post-hero-text wrap">
+          <p class="mono">{meta}</p>
+          <h1 class="page-title">{d.title}</h1>
+          {(d.place || d.summary) && <p class="page-lede">{[d.place, d.summary].filter(Boolean).join(' — ')}</p>}
+        </div>
+      </header>
+    ) : (
+      <header class="page-head wrap">
+        <p class="page-kicker">{meta}</p>
+        <h1 class="page-title">{d.title}</h1>
+        {(d.place || d.summary) && <p class="page-lede">{[d.place, d.summary].filter(Boolean).join(' — ')}</p>}
+      </header>
+    )
+  }
+
+  <article class={`wrap post-body ${d.cover ? '' : 'post-body--plain'}`}>
+    {d.draft && <p class="log-draft" style="display:inline-block;margin-bottom:1.5rem">{t.draftNote}</p>}
+    {
+      d.video && (
+        <div class="post-video reveal">
+          <video class="post-clip" src={d.video} controls playsinline preload="metadata">
+            <a href={d.video}>{d.title}</a>
+          </video>
+        </div>
+      )
+    }
+    {
+      d.youtube && (
+        <div class="post-video reveal">
+          <YouTube id={d.youtube} title={d.title} />
+        </div>
+      )
+    }
+    {t.writtenInSpanish && <p class="mono dim" style="margin-bottom:1.2rem">{t.writtenInSpanish}</p>}
+    <div class="prose reveal" lang="es">
+      <Content />
+    </div>
+    {photos.length > 0 && <PhotoStack client:visible photos={photos} labels={t.stack} />}
+    <p class="post-back"><a class="link-quiet" href={route('blog', lang)}>{t.backToBlog}</a></p>
+  </article>
+</Base>
+
+<style>
+  .post-hero {
+    position: relative;
+    height: min(92svh, 900px);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .post-hero :global(.post-cover) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.85) brightness(0.8);
+  }
+
+  .post-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(7, 8, 12, 0.5) 0%, transparent 30%, transparent 50%, rgba(7, 8, 12, 0.95) 100%);
+  }
+
+  .post-hero-text {
+    position: relative;
+    z-index: 1;
+    padding-bottom: clamp(2rem, 6vw, 4rem);
+  }
+
+  .post-hero-text .mono {
+    color: var(--fg-dim);
+    margin-bottom: 1rem;
+  }
+
+  .post-body {
+    padding-top: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .post-back {
+    margin-top: 3rem;
+  }
+
+  .post-body--plain {
+    padding-top: 0;
+  }
+
+  .post-video {
+    max-width: 900px;
+    margin-bottom: clamp(2rem, 5vw, 3rem);
+  }
+
+  /* clip subido desde el celular: sin recortar (puede ser vertical) */
+  .post-clip {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 80svh;
+    background: #0a0c12;
+    border-radius: 2px;
+  }
+</style>

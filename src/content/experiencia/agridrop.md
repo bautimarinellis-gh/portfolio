@@ -14,8 +14,9 @@ especificaciones reales de cada producto.
 
 ## Decisión de contenido
 
-En vez de bajada de marketing genérica, armé una ficha técnica por producto: principio
-activo, compatibilidad, pH, porcentaje de componente activo.
+En vez de bajada de marketing genérica, cada producto muestra su ficha técnica (principio
+activo, compatibilidad, pH, porcentaje de componente activo). Las fichas las proveyó la empresa;
+mi parte fue organizarlas y presentarlas en el sitio.
 
 ## Alcance
 

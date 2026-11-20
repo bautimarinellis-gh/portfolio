@@ -1,0 +1,564 @@
+---
+// La página de Trabajo, en español (/trabajo) o en inglés (/work).
+// Es de día: tema papel, sin cielo. Arriba, un resumen que se lee en 10 segundos.
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import TourConnectDiagram from './TourConnectDiagram.astro';
+
+interface Props {
+  lang: 'es' | 'en';
+}
+const { lang } = Astro.props;
+const isEn = lang === 'en';
+
+// las versiones en inglés viven en `en/` dentro de cada colección
+const byLang = <T extends { id: string }>(items: T[]) => items.filter((i) => i.id.startsWith('en/') === isEn);
+const proyectos = byLang(await getCollection('proyectos')).sort((a, b) => a.data.order - b.data.order);
+const experiencia = byLang(await getCollection('experiencia')).sort((a, b) => a.data.order - b.data.order);
+const proyectosRender = await Promise.all(proyectos.map(async (p) => ({ p, Content: (await render(p)).Content })));
+const experienciaRender = await Promise.all(experiencia.map(async (e) => ({ e, Content: (await render(e)).Content })));
+const slug = (id: string) => id.replace(/^en\//, '');
+
+const EMAIL = 'bautimarinelli100@gmail.com';
+const CV = '/cv/CV_BautistaMarinelli_ES.pdf';
+const LINKEDIN = 'https://www.linkedin.com/in/bautistamarinelliscaglia/';
+const GITHUB = 'https://github.com/bautimarinellis-gh';
+
+const t = isEn
+  ? {
+      pageTitle: 'Work and studies',
+      description:
+        'Work, studies and projects of Bautista Marinelli Scaglia: final-year Systems Engineering student in Rosario, Argentina. Backend with .NET and Node, databases and functional analysis.',
+      title: ['Work', 'and studies'],
+      lede: 'Work, studies and projects. If you came for the CV, this is the place.',
+      cv: 'CV',
+      cvNote: 'pdf, in Spanish',
+      summary: 'Summary',
+      summaryText: [
+        "I'm 23 and in my final year of Systems Engineering at Universidad Abierta Interamericana (UAI), already holding the intermediate Systems Analyst degree. I've been combining my studies with real work: I designed and built REST APIs with .NET Core and Node.js/Express, modelled SQL and NoSQL databases, and implemented authentication/authorization with JWT along with security practices such as rate limiting and role-based access control — in course projects as well as in my engineering thesis and my supervised internship, where I worked with real clients.",
+        "I'm looking for my first role in IT — backend development, functional analysis or IT analyst — where I can keep growing within a team and bring what I've been building in my projects. I work in Rosario, on-site or hybrid.",
+      ],
+      projects: 'Projects',
+      problem: 'Problem',
+      more: 'More',
+      less: 'Less',
+      case: 'Case: TourConnect',
+      caseLede:
+        'My engineering thesis: a B2B platform that connects tour wholesalers with the retail agencies they sell to. Catalog with per-agency pricing, quotes with availability control, bookings with traceability, payments and an assistant that answers questions in natural language.',
+      caseDecisions: [
+        ['Multitenant by design', 'Every request goes through a middleware chain (JWT in an HttpOnly cookie → role → tenant → permissions → usage limits), so a wholesaler and an agency only ever see their own data.'],
+        ['An assistant without a vector database', 'An intent classifier picks one of a catalog of known questions and builds the MongoDB query directly. Gemini phrases the answer; without an API key it falls back to a basic mode.'],
+        ['Everything leaves a trace', 'An audit module records every change to quotes, bookings and payments.'],
+        ['Real payments, test money', 'Mercado Pago checkout in test mode, with automatic status updates when the payment is confirmed.'],
+      ],
+      caseRepo: 'Repository',
+      experience: 'Experience',
+      studies: 'Studies',
+      studiesRows: [
+        ['Final year', 'Systems Engineering', 'Universidad Abierta Interamericana (UAI) · Rosario', 'Engineering thesis: TourConnect (completed).'],
+        ['Intermediate degree', 'Systems Analyst', 'Universidad Abierta Interamericana (UAI)', ''],
+      ],
+      stack: 'Stack',
+      stackRows: [
+        ['Backend', 'C#, .NET Core, ASP.NET, Entity Framework, Node.js, Express'],
+        ['Frontend', 'React, HTML, CSS, JavaScript'],
+        ['Data', 'SQL Server, MongoDB'],
+        ['Tools', 'Git, GitHub, Postman'],
+      ],
+      contact: 'Contact',
+      contactBig: "Let's talk.",
+      contactText: 'Available for roles in development, data or support. Rosario, on-site or hybrid.',
+      print: 'Print',
+    }
+  : {
+      pageTitle: 'Trabajo y estudios',
+      description:
+        'Trabajo, estudios y proyectos de Bautista Marinelli Scaglia: estudiante de último año de Ingeniería en Sistemas en Rosario. Backend con .NET y Node, bases de datos y análisis funcional.',
+      title: ['Trabajo', 'y estudios'],
+      lede: 'Laburo, estudios y proyectos. Si llegaste por el CV, este es el lugar.',
+      cv: 'CV',
+      cvNote: 'pdf',
+      summary: 'En resumen',
+      summaryText: [
+        'Tengo 23 años y estoy en el último año de Ingeniería en Sistemas en la Universidad Abierta Interamericana (UAI), con el título intermedio de Analista de Sistemas ya en mano. Vengo combinando la formación académica con trabajo real: diseñé y desarrollé APIs REST con .NET Core y Node.js/Express, modelé bases de datos SQL y NoSQL, e implementé autenticación/autorización con JWT junto con buenas prácticas de seguridad como rate limiting y control de accesos por roles — todo esto tanto en proyectos de cátedra como en mi Trabajo Final de Ingeniería y mi Práctica Profesional Supervisada, donde trabajé con clientes reales.',
+        'Estoy buscando mi primer rol en IT — desarrollo backend, análisis funcional o analista informático — donde pueda seguir creciendo dentro de un equipo, aportando lo que ya vengo construyendo en mis proyectos. Trabajo en Rosario, de forma presencial o híbrida.',
+      ],
+      projects: 'Proyectos',
+      problem: 'Problema',
+      more: 'Ver más',
+      less: 'Ver menos',
+      case: 'Caso: TourConnect',
+      caseLede:
+        'Mi Trabajo Final de Ingeniería: una plataforma B2B que conecta a los mayoristas turísticos con las agencias minoristas a las que les venden. Catálogo con precios por agencia, cotizaciones con control de cupo, reservas con trazabilidad, pagos y un asistente que responde consultas en lenguaje natural.',
+      caseDecisions: [
+        ['Multitenant desde el diseño', 'Cada pedido pasa por una cadena de middlewares (JWT en cookie HttpOnly → rol → tenant → permisos → límites de uso), así un mayorista y una agencia solo ven lo suyo.'],
+        ['Un asistente sin base vectorial', 'Un clasificador de intención elige entre un catálogo de consultas conocidas y arma la consulta a MongoDB directamente. Gemini redacta la respuesta; sin clave, responde en modo básico.'],
+        ['Todo deja rastro', 'Un módulo de auditoría registra cada cambio en cotizaciones, reservas y pagos.'],
+        ['Pagos reales, plata de prueba', 'Checkout de Mercado Pago en modo prueba, con la reserva actualizándose sola cuando se confirma el pago.'],
+      ],
+      caseRepo: 'Repositorio',
+      experience: 'Experiencia',
+      studies: 'Estudios',
+      studiesRows: [
+        ['Último año', 'Ingeniería en Sistemas', 'Universidad Abierta Interamericana (UAI) · Rosario', 'Trabajo Final de Ingeniería: TourConnect (terminado).'],
+        ['Título intermedio', 'Analista de Sistemas', 'Universidad Abierta Interamericana (UAI)', ''],
+      ],
+      stack: 'Stack',
+      stackRows: [
+        ['Backend', 'C#, .NET Core, ASP.NET, Entity Framework, Node.js, Express'],
+        ['Frontend', 'React, HTML, CSS, JavaScript'],
+        ['Datos', 'SQL Server, MongoDB'],
+        ['Herramientas', 'Git, GitHub, Postman'],
+      ],
+      contact: 'Contacto',
+      contactBig: 'Hablemos.',
+      contactText: 'Disponible para roles en desarrollo, datos o soporte. Rosario, presencial o híbrido.',
+      print: 'Imprimir',
+    };
+---
+
+<Base title={t.pageTitle} description={t.description} theme="day" current="trabajo" lang={lang}>
+  <header class="page-head wrap work-head">
+    <h1 class="page-title">{t.title[0]} <em>{t.title[1]}</em></h1>
+    <p class="page-lede">{t.lede}</p>
+
+    <div class="links-row work-links">
+      <a href={CV} target="_blank" rel="noopener" class="link-quiet">{t.cv} <small>{t.cvNote}</small></a>
+      <a href={`mailto:${EMAIL}`} class="link-quiet">{EMAIL}</a>
+      <a href={LINKEDIN} target="_blank" rel="noopener" class="link-quiet">LinkedIn</a>
+      <a href={GITHUB} target="_blank" rel="noopener" class="link-quiet">GitHub</a>
+      <button type="button" class="link-quiet print-btn" data-print>{t.print}</button>
+    </div>
+  </header>
+
+  <section class="section wrap" id="resumen">
+    <header class="section-head reveal"><span class="hour">01</span><h2>{t.summary}</h2></header>
+    <div class="prose reveal">
+      {t.summaryText.map((p) => <p>{p}</p>)}
+    </div>
+  </section>
+
+  <section class="section wrap" id="proyectos">
+    <header class="section-head reveal"><span class="hour">02</span><h2>{t.projects}</h2></header>
+    {
+      proyectosRender.map(({ p, Content }) => (
+        <article class="project reveal">
+          <div class="project-head">
+            <h3>{p.data.title}</h3>
+            <p class="project-status mono">
+              {p.data.active && <span class="ember-dot" />}
+              {p.data.status}
+            </p>
+          </div>
+          <div class="project-body prose">
+            <h2>{t.problem}</h2>
+            <p>{p.data.problem}</p>
+            <div class="more" id={`more-${slug(p.id)}`} hidden>
+              <Content />
+            </div>
+            <p class="stackline mono">{p.data.stack.join(' · ')}</p>
+            <div class="links-row foot">
+              <button
+                type="button"
+                class="toggle mono"
+                aria-expanded="false"
+                aria-controls={`more-${slug(p.id)}`}
+                data-more={t.more}
+                data-less={t.less}
+              >
+                {t.more}
+              </button>
+              {p.data.links.map((l) => (
+                <a href={l.href} target="_blank" rel="noopener" class="link-quiet">
+                  {l.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </section>
+
+  <section class="section wrap" id="caso">
+    <header class="section-head reveal"><span class="hour">03</span><h2>{t.case}</h2></header>
+    <p class="page-lede case-lede reveal">{t.caseLede}</p>
+    <div class="reveal"><TourConnectDiagram lang={lang} /></div>
+    <dl class="decisions">
+      {
+        t.caseDecisions.map(([k, v]) => (
+          <div class="decision reveal">
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))
+      }
+    </dl>
+    <p class="foot reveal">
+      <a href="https://github.com/bautimarinellis-gh/tourconnect-tfi" target="_blank" rel="noopener" class="link-quiet">{t.caseRepo}</a>
+    </p>
+  </section>
+
+  <section class="section wrap" id="experiencia">
+    <header class="section-head reveal"><span class="hour">04</span><h2>{t.experience}</h2></header>
+    {
+      experienciaRender.map(({ e, Content }) => (
+        <article class="entry reveal">
+          <p class="entry-when mono">{e.data.when}</p>
+          <div>
+            <h3>{e.data.title}</h3>
+            <p class="entry-where">{e.data.where}</p>
+            <div class="prose">
+              <Content />
+            </div>
+            {e.data.link && (
+              <p class="foot">
+                <a href={e.data.link.href} target="_blank" rel="noopener" class="link-quiet">
+                  {e.data.link.label}
+                </a>
+              </p>
+            )}
+          </div>
+        </article>
+      ))
+    }
+  </section>
+
+  <section class="section wrap" id="estudios">
+    <header class="section-head reveal"><span class="hour">05</span><h2>{t.studies}</h2></header>
+    {
+      t.studiesRows.map(([when, title, where, note]) => (
+        <article class="entry reveal">
+          <p class="entry-when mono">{when}</p>
+          <div>
+            <h3>{title}</h3>
+            <p class="entry-where">{where}</p>
+            {note && (
+              <div class="prose">
+                <p>{note}</p>
+              </div>
+            )}
+          </div>
+        </article>
+      ))
+    }
+  </section>
+
+  <section class="section wrap" id="stack">
+    <header class="section-head reveal"><span class="hour">06</span><h2>{t.stack}</h2></header>
+    <dl class="stack">
+      {
+        t.stackRows.map(([k, v]) => (
+          <div class="stack-row reveal">
+            <dt class="mono">{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="section wrap" id="contacto">
+    <header class="section-head reveal"><span class="hour">07</span><h2>{t.contact}</h2></header>
+    <p class="contact-big reveal">{t.contactBig}</p>
+    <p class="page-lede reveal">{t.contactText}</p>
+    <a class="contact-mail reveal" href={`mailto:${EMAIL}`}>{EMAIL}</a>
+  </section>
+</Base>
+
+<script>
+  // imprimir: abre todos los "ver más" para que el papel tenga todo
+  document.addEventListener('astro:page-load', () => {
+    document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+  });
+  window.addEventListener('beforeprint', () => {
+    document.querySelectorAll<HTMLElement>('.more[hidden]').forEach((el) => {
+      el.hidden = false;
+      el.dataset.printOpened = '1';
+    });
+  });
+  window.addEventListener('afterprint', () => {
+    document.querySelectorAll<HTMLElement>('.more[data-print-opened]').forEach((el) => {
+      el.hidden = true;
+      delete el.dataset.printOpened;
+    });
+  });
+</script>
+
+<style>
+  .work-head {
+    position: relative;
+  }
+
+  .work-links {
+    margin-top: 2.2rem;
+  }
+
+  .print-btn {
+    border: 0;
+    cursor: pointer;
+    background-color: transparent;
+    padding: 0 0 3px;
+  }
+
+  /* ---- proyectos ---- */
+  .project {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 2fr;
+    gap: clamp(1.5rem, 5vw, 4rem);
+    padding-block: clamp(2.2rem, 5vw, 3.4rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .project:last-child,
+  .entry:last-child {
+    border-bottom: 0;
+  }
+
+  .project h3,
+  .entry h3 {
+    font-family: var(--serif-display);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    font-variation-settings: "SOFT" 40;
+  }
+
+  .project h3 {
+    font-size: clamp(1.9rem, 1.3rem + 2vw, 2.7rem);
+  }
+
+  .project-status {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    margin-top: 0.7rem;
+    font-size: 0.72rem;
+    color: var(--fg-dim);
+  }
+
+  .ember-dot {
+    flex: none;
+    align-self: center;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: smoulder 3.2s ease-in-out infinite;
+  }
+
+  @keyframes smoulder {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    45% {
+      opacity: 0.4;
+    }
+  }
+
+  .project-body > h2:first-child {
+    margin-top: 0;
+  }
+
+  .more {
+    overflow: hidden;
+  }
+
+  .stackline {
+    margin-top: 1.4rem;
+    color: var(--fg-dim);
+    line-height: 1.8;
+  }
+
+  .foot {
+    margin-top: 1.4rem;
+  }
+
+  .toggle {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: 0;
+    color: var(--fg-dim);
+    transition: color 0.3s;
+  }
+
+  .toggle::before {
+    content: "+ ";
+    color: var(--accent);
+  }
+
+  .toggle[aria-expanded="true"]::before {
+    content: "− ";
+  }
+
+  .toggle:hover {
+    color: var(--fg);
+  }
+
+  /* ---- caso ---- */
+  .case-lede {
+    max-width: 62ch;
+    margin-top: 0;
+  }
+
+  .decisions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.6rem 2.4rem;
+    max-width: 1000px;
+  }
+
+  .decision dt {
+    font-family: var(--serif-display);
+    font-size: 1.2rem;
+    font-weight: 420;
+    margin-bottom: 0.35rem;
+  }
+
+  .decision dd {
+    color: var(--fg-dim);
+    font-size: 0.98rem;
+  }
+
+  /* ---- experiencia, estudios, stack ---- */
+  .entry {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 2rem;
+    padding-block: 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .entry-when {
+    color: var(--fg-dim);
+    padding-top: 0.45rem;
+  }
+
+  .entry h3 {
+    font-size: clamp(1.35rem, 1.1rem + 0.9vw, 1.75rem);
+  }
+
+  .entry-where {
+    margin-top: 0.3rem;
+    margin-bottom: 1rem;
+    font-style: italic;
+    color: var(--fg-dim);
+  }
+
+  .stack-row {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 2rem;
+    padding-block: 1.1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stack-row dt {
+    color: var(--fg-dim);
+    padding-top: 0.25rem;
+  }
+
+  .stack-row dd {
+    font-family: var(--serif-display);
+    font-size: clamp(1.15rem, 1rem + 0.6vw, 1.45rem);
+    font-weight: 350;
+  }
+
+  .contact-big {
+    font-family: var(--serif-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(3rem, 1.4rem + 7vw, 7rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variation-settings: "SOFT" 100, "opsz" 144;
+  }
+
+  .contact-mail {
+    display: inline-block;
+    margin-top: 2rem;
+    font-family: var(--serif-display);
+    font-size: clamp(1.15rem, 0.8rem + 1.8vw, 2rem);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 0.2rem;
+    transition: border-color 0.5s var(--ease);
+  }
+
+  .contact-mail:hover {
+    border-color: var(--accent);
+  }
+
+  @media (max-width: 760px) {
+    .project,
+    .entry,
+    .stack-row {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+    }
+
+    .project {
+      gap: 1.4rem;
+    }
+
+    .entry-when {
+      padding-top: 0;
+    }
+  }
+
+  /* ---- impreso: como un CV, tinta sobre blanco ---- */
+  @media print {
+    :global(.site-header),
+    :global(.sky),
+    :global(.embers),
+    :global(.veil),
+    :global(.skip),
+    .toggle,
+    .print-btn,
+    #contacto .contact-big {
+      display: none !important;
+    }
+
+    :global(html),
+    :global(body) {
+      background: #fff !important;
+      color: #111 !important;
+      font-size: 10.5pt;
+    }
+
+    :global(.js .reveal) {
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+    }
+
+    :global(.page-head) {
+      padding-top: 0 !important;
+    }
+
+    :global(.section) {
+      padding-block: 1.2rem !important;
+      break-inside: avoid-page;
+    }
+
+    .project,
+    .entry,
+    .decision {
+      break-inside: avoid;
+    }
+
+    .more {
+      height: auto !important;
+      opacity: 1 !important;
+    }
+
+    a[href^="http"]::after {
+      content: " (" attr(href) ")";
+      font-size: 8pt;
+      color: #666;
+    }
+  }
+</style>

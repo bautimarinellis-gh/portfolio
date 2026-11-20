@@ -1,13 +1,16 @@
 ---
-import { formatDate, formatMonth, monthKey, typeLabel, type LogItem } from '../lib/content';
+import { formatDate, formatMonth, monthKey, type LogItem } from '../lib/content';
+import { ui, type Lang } from '../lib/i18n';
 
 interface Props {
   items: LogItem[];
-  /** agrupar por mes (en /bitacora) */
+  /** agrupar por mes (en /blog) */
   grouped?: boolean;
+  lang?: Lang;
 }
 
-const { items, grouped = false } = Astro.props;
+const { items, grouped = false, lang = 'es' } = Astro.props;
+const t = ui[lang];
 
 // para agrupar: insertar un encabezado cada vez que cambia el mes
 const rows: Array<{ month: string; label: string } | LogItem> = [];
@@ -15,7 +18,7 @@ let lastMonth = '';
 for (const it of items) {
   const key = monthKey(it.date);
   if (grouped && key !== lastMonth) {
-    rows.push({ month: key, label: formatMonth(it.date) });
+    rows.push({ month: key, label: formatMonth(it.date, lang) });
     lastMonth = key;
   }
   rows.push(it);
@@ -24,7 +27,7 @@ for (const it of items) {
 
 {
   items.length === 0 ? (
-    <p class="empty">Todavía no hay nada acá. Pronto.</p>
+    <p class="empty">{t.empty}</p>
   ) : (
     <ul class="log">
       {rows.map((r) =>
@@ -33,18 +36,18 @@ for (const it of items) {
             {r.label}
           </li>
         ) : (
-          <li class="log-item reveal" data-type={r.type} data-month-of={monthKey(r.date)}>
+          <li class="log-item reveal" data-type={r.kind} data-month-of={monthKey(r.date)}>
             <time class="log-date" datetime={r.date.toISOString().slice(0, 10)}>
-              {formatDate(r.date)}
+              {formatDate(r.date, lang)}
             </time>
-            <span class="log-type">{typeLabel[r.type]}</span>
+            <span class="log-type">{r.label}</span>
             <div class="log-body">
               <a class="log-title" href={r.href}>
                 {r.title}
               </a>
               {r.meta && <span class="log-meta">{r.meta}</span>}
             </div>
-            {r.draft && <span class="log-draft">borrador</span>}
+            {r.draft && <span class="log-draft">{t.draft}</span>}
           </li>
         ),
       )}
