@@ -20,6 +20,6 @@ trazabilidad de cambios sobre cotizaciones y reservas.
 
 ## Alcance
 
-Trabajo Final de Ingeniería. API REST con 7 módulos funcionales (autenticación, catálogo,
+Trabajo Final de Ingeniería. API REST con más de 10 módulos (autenticación, catálogo,
 cotizaciones, reservas y pagos), documentación funcional con UML y testing de endpoints
 con Postman.

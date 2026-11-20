@@ -20,7 +20,7 @@ const experienciaRender = await Promise.all(experiencia.map(async (e) => ({ e, C
 const slug = (id: string) => id.replace(/^en\//, '');
 
 const EMAIL = 'bautimarinelli100@gmail.com';
-const CV = '/cv/CV_BautistaMarinelli_ES.pdf';
+const CV = isEn ? '/cv/CV_BautistaMarinelli_EN.pdf' : '/cv/CV_BautistaMarinelli_ES.pdf';
 const LINKEDIN = 'https://www.linkedin.com/in/bautistamarinelliscaglia/';
 const GITHUB = 'https://github.com/bautimarinellis-gh';
 
@@ -28,15 +28,15 @@ const t = isEn
   ? {
       pageTitle: 'Work and studies',
       description:
-        'Work, studies and projects of Bautista Marinelli Scaglia: final-year Systems Engineering student in Rosario, Argentina. Backend with .NET and Node, databases and functional analysis.',
+        'Work, studies and projects of Bautista Marinelli Scaglia: about to graduate as a Systems Engineer in Rosario, Argentina. Backend with .NET and Node, databases and functional analysis.',
       title: ['Work', 'and studies'],
       lede: 'Work, studies and projects. If you came for the CV, this is the place.',
       cv: 'CV',
-      cvNote: 'pdf, in Spanish',
-      summary: 'Summary',
+      cvNote: 'pdf',
+      summary: 'About me',
       summaryText: [
-        "I'm in my final year of Systems Engineering at Universidad Abierta Interamericana (UAI) and already hold the Systems Analyst degree. I work mostly on the backend: I design REST APIs with .NET Core and Node.js, model SQL and NoSQL databases, and build security in from the start, with JWT authentication, role-based permissions and rate limiting.",
-        'My engineering thesis, TourConnect, is a multitenant B2B platform for tour wholesalers: seven modules, Mercado Pago payments, an audit trail for every change and an assistant that answers questions in natural language. Alongside it, in my supervised internship at Quintales Rufino and as a freelancer for Agridrop, I took projects to production with real clients: websites, data gathering and support for the sales team.',
+        "I'm one step away from graduating as a Systems Engineer at Universidad Abierta Interamericana (UAI): all that's left is my thesis defense. I already hold the Systems Analyst degree. I work mostly on the backend: I design REST APIs with .NET Core and Node.js, model SQL and NoSQL databases, and build security in from the start, with JWT authentication, role-based permissions and rate limiting.",
+        'My engineering thesis, TourConnect, is a multitenant B2B platform for tour wholesalers: more than ten modules, Mercado Pago payments, an audit trail for every change and an assistant that answers questions in natural language. Alongside it, in my supervised internship at Quintales Rufino and as a freelancer for Agridrop, I took projects to production with real clients: websites, data gathering and support for the sales team.',
         'What I enjoy most is backend development and functional analysis: understanding a business problem and turning it into a system that works.',
       ],
       projects: 'Projects',
@@ -56,7 +56,7 @@ const t = isEn
       experience: 'Experience',
       studies: 'Studies',
       studiesRows: [
-        ['Final year', 'Systems Engineering', 'Universidad Abierta Interamericana (UAI) · Rosario', 'Engineering thesis: TourConnect (completed).'],
+        ['Almost there', 'Systems Engineering', 'Universidad Abierta Interamericana (UAI) · Rosario', 'Only the thesis defense is left. The thesis, TourConnect, is already completed.'],
         ['Intermediate degree', 'Systems Analyst', 'Universidad Abierta Interamericana (UAI)', ''],
       ],
       stack: 'Stack',
@@ -69,20 +69,20 @@ const t = isEn
       contact: 'Contact',
       contactBig: "Let's talk.",
       contactText: 'Open to any role: remote, or on-site and hybrid in Rosario.',
-      print: 'Print',
+      print: 'Print CV',
     }
   : {
       pageTitle: 'Trabajo y estudios',
       description:
-        'Trabajo, estudios y proyectos de Bautista Marinelli Scaglia: estudiante de último año de Ingeniería en Sistemas en Rosario. Backend con .NET y Node, bases de datos y análisis funcional.',
+        'Trabajo, estudios y proyectos de Bautista Marinelli Scaglia: a punto de recibirse de Ingeniero en Sistemas en Rosario. Backend con .NET y Node, bases de datos y análisis funcional.',
       title: ['Trabajo', 'y estudios'],
       lede: 'Laburo, estudios y proyectos. Si llegaste por el CV, este es el lugar.',
       cv: 'CV',
       cvNote: 'pdf',
-      summary: 'En resumen',
+      summary: 'Sobre mí',
       summaryText: [
-        'Estoy en el último año de Ingeniería en Sistemas en la Universidad Abierta Interamericana (UAI) y ya soy Analista de Sistemas. Trabajo sobre todo del lado del backend: diseño APIs REST con .NET Core y Node.js, modelo bases de datos SQL y NoSQL, y pienso la seguridad desde el principio, con autenticación JWT, permisos por rol y límites de uso.',
-        'Mi Trabajo Final, TourConnect, es una plataforma B2B multitenant para el turismo mayorista: siete módulos, pagos con Mercado Pago, auditoría de cada cambio y un asistente que responde consultas en lenguaje natural. En paralelo, en mi práctica profesional en Quintales Rufino y como freelance para Agridrop, llevé proyectos a producción con clientes reales: sitios web, relevamiento de datos y soporte al área comercial.',
+        'Estoy a un paso de recibirme de Ingeniero en Sistemas en la Universidad Abierta Interamericana (UAI): solo me queda defender la tesis. Ya tengo el título de Analista de Sistemas. Trabajo sobre todo del lado del backend: diseño APIs REST con .NET Core y Node.js, modelo bases de datos SQL y NoSQL, y pienso la seguridad desde el principio, con autenticación JWT, permisos por rol y límites de uso.',
+        'Mi Trabajo Final, TourConnect, es una plataforma B2B multitenant para el turismo mayorista: más de diez módulos, pagos con Mercado Pago, auditoría de cada cambio y un asistente que responde consultas en lenguaje natural. En paralelo, en mi práctica profesional en Quintales Rufino y como freelance para Agridrop, llevé proyectos a producción con clientes reales: sitios web, relevamiento de datos y soporte al área comercial.',
         'Lo que más me gusta es el desarrollo backend y el análisis funcional: entender un problema de negocio y convertirlo en un sistema que funcione.',
       ],
       projects: 'Proyectos',
@@ -102,7 +102,7 @@ const t = isEn
       experience: 'Experiencia',
       studies: 'Estudios',
       studiesRows: [
-        ['Último año', 'Ingeniería en Sistemas', 'Universidad Abierta Interamericana (UAI) · Rosario', 'Trabajo Final de Ingeniería: TourConnect (terminado).'],
+        ['Casi recibido', 'Ingeniería en Sistemas', 'Universidad Abierta Interamericana (UAI) · Rosario', 'Solo me queda defender la tesis. El Trabajo Final, TourConnect, ya está terminado.'],
         ['Título intermedio', 'Analista de Sistemas', 'Universidad Abierta Interamericana (UAI)', ''],
       ],
       stack: 'Stack',
@@ -115,7 +115,7 @@ const t = isEn
       contact: 'Contacto',
       contactBig: 'Hablemos.',
       contactText: 'Disponible para cualquier rol: remoto, o presencial e híbrido en Rosario.',
-      print: 'Imprimir',
+      print: 'Imprimir CV',
     };
 ---
 
@@ -129,7 +129,7 @@ const t = isEn
       <a href={`mailto:${EMAIL}`} class="link-quiet">{EMAIL}</a>
       <a href={LINKEDIN} target="_blank" rel="noopener" class="link-quiet">LinkedIn</a>
       <a href={GITHUB} target="_blank" rel="noopener" class="link-quiet">GitHub</a>
-      <button type="button" class="link-quiet print-btn" data-print>{t.print}</button>
+      <button type="button" class="link-quiet print-btn" data-print={CV}>{t.print}</button>
     </div>
   </header>
 
@@ -269,10 +269,39 @@ const t = isEn
 </Base>
 
 <script>
-  // imprimir: abre todos los "ver más" para que el papel tenga todo
+  // "Imprimir CV": imprime el PDF del CV, no la página. Lo carga en un iframe invisible y
+  // abre el diálogo de impresión de ese documento. En celulares (donde imprimir un iframe no
+  // anda) o si el navegador no lo permite, abre el PDF en otra pestaña para imprimirlo desde ahí.
   document.addEventListener('astro:page-load', () => {
-    document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+    const btn = document.querySelector<HTMLButtonElement>('[data-print]');
+    btn?.addEventListener('click', () => {
+      const url = btn.dataset.print!;
+      const openPdf = () => window.open(url, '_blank', 'noopener');
+      if (window.matchMedia('(pointer: coarse)').matches) return openPdf();
+
+      document.getElementById('cv-print-frame')?.remove();
+      const frame = document.createElement('iframe');
+      frame.id = 'cv-print-frame';
+      frame.title = 'CV';
+      frame.setAttribute('aria-hidden', 'true');
+      frame.style.cssText = 'position:fixed;left:-10000px;top:0;width:800px;height:1100px;border:0;';
+      frame.addEventListener('load', () => {
+        // el visor de PDF termina de prepararse un poco después del load
+        setTimeout(() => {
+          try {
+            frame.contentWindow!.focus();
+            frame.contentWindow!.print();
+          } catch {
+            openPdf();
+          }
+        }, 400);
+      });
+      frame.src = url;
+      document.body.appendChild(frame);
+    });
   });
+
+  // Ctrl+P sobre la página: abre todos los "ver más" para que el papel tenga todo
   window.addEventListener('beforeprint', () => {
     document.querySelectorAll<HTMLElement>('.more[hidden]').forEach((el) => {
       el.hidden = false;

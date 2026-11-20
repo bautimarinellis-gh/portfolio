@@ -20,5 +20,5 @@ bookings.
 
 ## Scope
 
-Final engineering project. REST API with 7 functional modules (authentication, catalog, quotes,
+Final engineering project. REST API with more than 10 modules (authentication, catalog, quotes,
 bookings and payments), functional documentation with UML and endpoint testing with Postman.

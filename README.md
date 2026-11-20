@@ -80,3 +80,17 @@ Sin `video`, se usa la escena dibujada (cielo, luna, mar y médanos).
 
 Es un sitio estático (`dist/`): sirve en Netlify, Vercel, Cloudflare Pages o GitHub Pages.
 Antes de publicar, cambiar `site` en `astro.config.mjs` por el dominio real.
+
+## CV
+
+Los CV en PDF (`public/cv/CV_BautistaMarinelli_ES.pdf` y `_EN.pdf`) se generan desde `cv/cv-es.html` y
+`cv/cv-en.html`. Están pensados para pasar filtros ATS: una sola columna, texto real, títulos estándar, sin
+íconos ni tablas, y nombre y contacto primero.
+
+Para cambiar algo: editar el HTML (y `cv/cv.css` para el diseño) y correr
+
+```bash
+node cv/generar.mjs
+```
+
+Usa Edge o Chrome en modo headless. Conviene que entre en una página.

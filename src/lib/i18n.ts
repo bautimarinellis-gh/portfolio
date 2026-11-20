@@ -52,7 +52,8 @@ export const ui = {
     menu: 'menú',
     close: 'cerrar',
     siteDescription:
-      'Bautista Marinelli Scaglia. Rosario. Un blog de días, viajes y entrenamientos; libros y películas; y también lo profesional: trabajo, estudios y proyectos.',
+      'Un lugar para dejar lo que pasa: un viaje, un libro, una película, una tarde.',
+    ogAlt: 'Bautista Marinelli Scaglia, escrito sobre un cielo de noche con estrellas, la luna, el mar y las brasas de un fuego.',
     backToNight: 'Volver a la noche →',
     // home
     heroLede: 'Un lugar para dejar lo que pasa: un viaje, un libro, una película, una tarde.',
@@ -99,7 +100,8 @@ export const ui = {
     menu: 'menu',
     close: 'close',
     siteDescription:
-      'Bautista Marinelli Scaglia. Rosario, Argentina. A blog of days, trips and training; books and films; and the professional side: work, studies and projects.',
+      'A place to leave what happens: a trip, a book, a film, an afternoon.',
+    ogAlt: 'Bautista Marinelli Scaglia, written over a night sky with stars, the moon, the sea and the embers of a fire.',
     backToNight: 'Back to the night →',
     heroLede:
       'A place to leave what happens: a trip, a book, a film, an afternoon.',
