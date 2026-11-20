@@ -1,0 +1,21 @@
+# Recompila el sitio una vez por día para traer lo nuevo de Letterboxd.
+# Llama al "deploy hook" de Vercel (guardado como secreto VERCEL_DEPLOY_HOOK),
+# que publica la rama rediseno-noche. También se puede correr a mano desde Actions.
+name: Recompilar el sitio (diario)
+
+on:
+  schedule:
+    - cron: "0 9 * * *" # 06:00 en Rosario
+  workflow_dispatch:
+
+jobs:
+  recompilar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pedirle a Vercel que vuelva a publicar
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "Falta el secreto VERCEL_DEPLOY_HOOK"; exit 1; fi
+          curl -fsS -X POST "$HOOK" > /dev/null
+          echo "Listo: Vercel está recompilando el sitio."
