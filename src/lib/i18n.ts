@@ -77,7 +77,7 @@ export const ui = {
     empty: 'Todavía no hay nada acá. Pronto.',
     draft: 'borrador',
     // blog
-    blogLede: 'Un viaje, un entrenamiento, un día, una tarde. Lo que vaya pasando.',
+    blogLede: 'Lo que va pasando, sin apuro.',
     filterBy: 'Filtrar por tipo',
     backToBlog: '← todo el blog',
     stack: { next: 'siguiente', prev: 'anterior', open: 'ver grande', hint: 'arrastrá o tocá la foto para pasar' },
@@ -126,7 +126,7 @@ export const ui = {
     hint: 'scroll slowly',
     empty: 'Nothing here yet. Soon.',
     draft: 'draft',
-    blogLede: 'A trip, a training session, a day, an afternoon. Whatever happens.',
+    blogLede: 'Whatever comes along, no rush.',
     filterBy: 'Filter by type',
     backToBlog: '← all posts',
     stack: { next: 'next', prev: 'previous', open: 'full size', hint: 'drag or tap the photo to flip through' },
